@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dragover {
+    @apply bg-gray-200 border-dashed border-2 border-gray-400;
+}
+
+* {
+    &::-webkit-scrollbar {
+        @apply rounded-lg;
+
+        width: 5px;
+        height: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply hidden;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 rounded-lg;
+
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-corner {
+        @apply hidden;
+    }
+}

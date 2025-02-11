@@ -1,0 +1,54 @@
+{
+  "name": "@akyoscommunication/ux-filemanager",
+  "description": "UX filemanager using Live component",
+  "main": "dist/main.js",
+  "version": "1.0.0",
+  "license": "MIT",
+  "config": {
+    "css_source": "src/app.css"
+  },
+  "symfony": {
+    "controllers": {
+      "ux-filemanager": {
+        "main": "dist/controllers/ux-filemanager_controller.js",
+        "name": "ux-filemanager",
+        "webpackMode": "eager",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {
+          "@akyoscommunication/ux-filemanager/dist/app.css": true
+        }
+      },
+      "ux-filemanager-dropzone": {
+        "main": "dist/controllers/ux-filemanager-dropzone_controller.js",
+        "name": "ux-filemanager-dropzone",
+        "webpackMode": "eager",
+        "fetch": "eager",
+        "enabled": true
+      }
+    },
+    "importmap": {
+      "@hotwired/stimulus": "^3.0.0"
+    }
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.0",
+    "postcss-prefix-selector": "^2.1.0"
+  },
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.0.0"
+  },
+  "devDependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "@testing-library/dom": "^7.31.0",
+    "@testing-library/user-event": "^13.1.9",
+    "@types/node-fetch": "^2.6.2",
+    "node-fetch": "^2.6.1",
+    "tailwindcss": "^3.4.14"
+  },
+  "scripts": {
+    "build": "npx tailwindcss -c ./tailwind.config.js -i ./src/app.css -o ./dist/app.css --postcss"
+  }
+}

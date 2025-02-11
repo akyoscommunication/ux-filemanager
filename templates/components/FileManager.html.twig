@@ -1,0 +1,389 @@
+{% trans_default_domain 'ux-filemanager' %}
+
+{% macro tree_item(folder, realPath, path = "") %}
+    {% for title, s in folder %}
+        {% set pathForItem = path ~ "/" ~ title %}
+        {% set inFolder = (realPath ~ '/')|strpos((pathForItem ~ '/')) %}
+
+        {% if s is iterable and s is not empty %}
+            <details class="group border-l-2 border-blue-400 pl-2 w-fit" {{ inFolder ? 'open' : false }}>
+                <summary class="flex items-center space-x-2 cursor-pointer py-1 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300">
+                    {% if inFolder %}
+                        <twig:ux:icon name="flat-color-icons:opened-folder" class="w-6"/>
+                    {% else %}
+                        <twig:ux:icon name="flat-color-icons:folder" class="w-6"/>
+                    {% endif %}
+                    <button type="button" class="{{ inFolder ? 'font-bold text-blue-600' : 'font-medium' }}" {{ live_action('changeDir', {'dir' : pathForItem }) }}>{{ title }}</button>
+                </summary>
+                <div class="pl-6 mt-1">
+                    {{ _self.tree_item(s, realPath, pathForItem) }}
+                </div>
+            </details>
+        {% else %}
+            <div class="flex items-center space-x-2 pl-2 py-1 w-fit">
+                {% if inFolder %}
+                    <twig:ux:icon name="flat-color-icons:opened-folder" class="w-6"/>
+                {% else %}
+                    <twig:ux:icon name="flat-color-icons:folder" class="w-6"/>
+                {% endif %}
+                <button type="button" class="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 {{ inFolder ? 'font-bold dark:text-blue-600' : 'font-medium' }}" {{ live_action('changeDir', {'dir' : pathForItem }) }}>{{ title }}</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro input_checkbox(path) %}
+    <label class="flex items-center cursor-pointer">
+        <input type="checkbox" class="peer hidden" data-model="selectedPaths[]" value="{{ path }}">
+        <div class="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center transition"></div>
+    </label>
+{% endmacro %}
+
+<div{{ attributes.defaults({class: 'flex h-full bg-gray-50 dark:bg-gray-900'})
+    .add(stimulus_controller('dialog'))
+    .add(stimulus_action('dialog', 'backdropClose'))
+
+    .add(stimulus_controller('ux-filemanager-dropzone'))
+}}>
+    <!-- Sidebar -->
+    <div class="w-64 bg-white border-r border-gray-200 p-4 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-300 space-y-8">
+        <div class="flex items-center space-x-2 mb-8">
+            <twig:ux:icon name="emojione-v1:open-folder" class="text-blue-600 dark:text-blue-400 w-6 h-6"/>
+            <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">File Manager</h1>
+        </div>
+
+        <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg">
+            <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'other_spaces.label'|trans }}</div>
+
+            <div class="space-y-2 overflow-hidden">
+                {% for key, space in otherSpaces %}
+                    <button type="button" class="flex items-center space-x-2" {{ live_action('changePath', { path: key }) }}>
+                        <span class="w-8 h-8 bg-blue-500 rounded-full"></span>
+                        <div class="flex flex-col items-start">
+                            <p class="text-gray-700 dark:text-gray-300 truncate">{{ space.name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'other_spaces.change'|trans }}</p>
+                        </div>
+                    </button>
+                {% else %}
+                    <div class="text-gray-500 dark:text-gray-400 text-xs">{{ 'other_spaces.empty'|trans }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg">
+            <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'explore.label'|trans }}</div>
+            <div class="overflow-scroll max-h-96">
+                {{ _self.tree_item(tree, realPath) }}
+            </div>
+        </div>
+
+        <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg" data-live-ignore>
+            <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'storage.label'|trans }}</div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                <div class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full" style="width: {{ currentStorage.percentage }}%"></div>
+            </div>
+            <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ 'storage.remain'|trans({"%percent%" : currentStorage.percentage, "%total%" : currentStorage.total|bytes_to_human}) }}</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6 dark:bg-gray-900 overflow-x-scroll pb-12" {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }} data-animation="false">
+        <!-- Header -->
+        <div class="flex justify-between items-center gap-2 mb-6 sticky top-0 py-4 bg-gray-50 dark:bg-gray-900 z-10">
+            <!-- Barre de recherche -->
+            <div class="relative">
+                <input type="search" placeholder="{{ 'global.search'|trans }}" class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 w-64 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200" data-model="q">
+                <twig:ux:icon name="iconamoon:search-light" class="w-5 text-gray-400 absolute left-3 top-2.5 dark:text-gray-500"/>
+            </div>
+
+            <!-- Options d'affichage -->
+            <div class="flex space-x-4">
+                <div class="inline-flex border border-blue-100 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button class="p-2
+            {{ view is same as(constant('VIEW_LIST', this)) ? 'bg-blue-100 dark:bg-gray-700' : 'bg-blue-50 dark:bg-gray-800' }}
+            text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-600 transition flex items-center"
+                        {{ live_action('changeView', {view : constant('VIEW_LIST', this)}) }}>
+                        <twig:ux:icon name="ic:round-view-list" class="w-4"/>
+                    </button>
+                    <button class="p-2
+            {{ view is same as(constant('VIEW_GRID', this)) ? 'bg-blue-100 dark:bg-gray-700' : 'bg-blue-50 dark:bg-gray-800' }}
+            text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-600 transition border-l border-blue-100 dark:border-gray-700 flex items-center"
+                        {{ live_action('changeView', {view : constant('VIEW_GRID', this)}) }}>
+                        <twig:ux:icon name="mingcute:grid-fill" class="w-4"/>
+                    </button>
+                </div>
+
+                {% if selectedPaths is not empty %}
+                    <!-- Mode d'affichage -->
+                    <select data-model="bulkAction" class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800">
+                        <option value="delete">{{ 'global.bulk.delete'|trans }}</option>
+                        <option value="zip">{{ 'global.bulk.zip'|trans }}</option>
+                    </select>
+                    <!-- Suppression groupée -->
+                    <button class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800" {{ live_action('bulk') }}>
+                        {{ 'global.bulk.save'|trans }}
+                    </button>
+                {% endif %}
+            </div>
+
+            <div class="flex space-x-2">
+                <button class="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" {{ stimulus_action('dialog', 'open') }}>
+                    {{ 'global.new_folder'|trans }}
+                </button>
+            </div>
+        </div>
+
+        {% if recently_used|length %}
+            <!-- Recently Used files list -->
+            <section class="mb-6">
+                <h2 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-4 flex gap-2"><twig:ux:icon name="svg-spinners:clock" class="w-4"/> {{ 'global.recents'|trans }}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {% for file in recently_used %}
+                        {% set file = file|spl_file_info %}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group relative h-36">
+                            <img src="{{ file.realPath|ux_filemanager_render }}" alt="" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl">
+                            <div class="flex item s-center justify-between mb-2 relative z-10">
+                                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
+                                    <button class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
+                                        {{ live_action('edit', {path : file.realPath}) }}>
+                                        <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <a class="flex flex-col items-center space-y-3 pt-4 absolute inset-0" {{ live_action('choose', {'path': file.realPath}) }}></a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <!-- Order by -->
+        <section class="mb-2 flex items-center justify-between gap-4">
+            <h2 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-4 flex gap-2"><twig:ux:icon name="mdi:filter-outline" class="w-4"/> {{ 'global.order_by.label'|trans }}</h2>
+            <div class="flex flex-wrap gap-2 justify-end">
+                {% set filters = {('files.table.name'|trans): constant('ORDER_BY_NAME', this), ('files.table.size'|trans): constant('ORDER_BY_SIZE', this), ('files.table.mtime'|trans): constant('ORDER_BY_MTIME', this)} %}
+                {% for title, by in filters %}
+                    <button class="text-sm px-4 py-2 bg-gray-100 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition {{ orderBy is same as(by) ? 'dark:bg-gray-700' : 'dark:bg-gray-800' }}" {{ live_action('orderByToggle', {'by' : by}) }}>
+                        {{ title }}
+                    </button>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% set totalItem = subFolders|length + files|length + (backFolder is not same as(null) ? 1 : 0) %}
+        {% if totalItem == 0 %}
+            <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                {{ 'files.empty'|trans }}
+            </div>
+        {% else %}
+            {% if view is same as(constant('VIEW_LIST', this)) %}
+                <!-- File List -->
+                <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Header -->
+                    <div class="grid grid-cols-12 px-6 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400">
+                        <div class="col-span-5">{{ 'files.table.name'|trans }}</div>
+                        <div class="col-span-2">{{ 'files.table.size'|trans }}</div>
+                        <div class="col-span-4">{{ 'files.table.mtime'|trans }}</div>
+                    </div>
+
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                        {% if backFolder is not same as(null) %}
+                            <a class="grid grid-cols-12 px-6 py-3 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                {{ live_action('changeDir', {'dir' : backFolder }) }}
+                                {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+                               data-animation="true" data-path="{{ this.realPath|dirname }}">
+                                <div class="col-span-6 flex items-center space-x-3">
+                                    <span class="text-gray-700 dark:text-gray-300">...</span>
+                                </div>
+                            </a>
+                        {% endif %}
+                        {% for subFolder in subFolders %}
+                            <div class="grid grid-cols-12 px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+                                 data-animation="true" data-path="{{ subFolder.realPath }}"
+                                 draggable="true"
+                                 ondragstart="event.dataTransfer.setData('path', '{{ subFolder.realPath }}');">
+                                <div class="col-span-5 flex items-center space-x-3">
+                                    {{ _self.input_checkbox(subFolder.realPath) }}
+
+                                    <twig:ux:icon name="flat-color-icons:folder" class="w-6" />
+                                    <a class="text-gray-700 dark:text-gray-300 truncate"
+                                        {{ live_action('changeDir', {dir : dir ~ '/' ~ subFolder.relativePathname }) }}>
+                                        {{ subFolder.filename }}
+                                    </a>
+                                </div>
+                                <a class="col-span-2 text-gray-500 dark:text-gray-400 text-sm self-center"
+                                    {{ live_action('changeDir', {dir : dir ~ '/' ~ subFolder.relativePathname }) }}>
+                                    {{ subFolder.size|bytes_to_human }}
+                                </a>
+                                <a class="col-span-4 text-gray-500 dark:text-gray-400 text-sm self-center truncate"
+                                    {{ live_action('changeDir', {dir : dir ~ '/' ~ subFolder.relativePathname }) }}>
+                                    {{ subFolder.mTime|date }}
+                                </a>
+                                <div class="col-span-1 text-gray-500 dark:text-gray-400 text-sm flex items-end justify-center gap-2">
+                                    <button class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                                        {{ live_action('prevent|delete', {path : subFolder.realPath}) }}>
+                                        <twig:ux:icon name="iconamoon:trash" class="w-4"/>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% for file in files %}
+                            <div class="grid grid-cols-12 px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                                 draggable="true" data-path="{{ file.realPath }}"
+                                 ondragstart="event.dataTransfer.setData('path', '{{ file.realPath }}');">
+                                <div class="col-span-5 flex items-center space-x-3">
+                                    {{ _self.input_checkbox(file.realPath) }}
+
+                                    <twig:ux:icon name="{{ file|mime_icon }}" class="w-6" />
+                                    <a class="text-gray-700 dark:text-gray-300 truncate" {{ live_action('choose', {'path': file.realPath}) }}>
+                                        {{ file.filename }}
+                                    </a>
+                                </div>
+                                <div class="col-span-2 text-gray-500 dark:text-gray-400 text-sm self-center">{{ file.size|bytes_to_human }}</div>
+                                <div class="col-span-4 text-gray-500 dark:text-gray-400 text-sm self-center truncate">{{ file.mTime|date }}</div>
+                                <div class="col-span-1 text-gray-500 dark:text-gray-400 text-sm flex items-end justify-center gap-2">
+                                    <button class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
+                                        {{ live_action('edit', {path : file.realPath}) }}>
+                                        <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
+                                    </button>
+                                    <button class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                                        {{ live_action('delete', {path : file.realPath}) }}>
+                                        <twig:ux:icon name="iconamoon:trash" class="w-4"/>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {% if backFolder is not same as(null) %}
+                        <!-- Dossier parent -->
+                        <a class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                            {{ live_action('changeDir', {'dir' : backFolder }) }}
+                            {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+                           data-animation="true" data-path="{{ this.realPath|dirname }}">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="text-gray-700 dark:text-gray-300">...</span>
+                            </div>
+                        </a>
+                    {% endif %}
+
+                    {% for subFolder in subFolders %}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group"
+                            {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+                             data-animation="true" data-path="{{ subFolder.realPath }}" draggable="true"
+                             ondragstart="event.dataTransfer.setData('path', '{{ subFolder.realPath }}');">
+
+                            <!-- Checkbox + Bouton de suppression -->
+                            <div class="flex items-center justify-between mb-2">
+                                {{ _self.input_checkbox(subFolder.realPath) }}
+
+                                <button class="opacity-0 group-hover:opacity-100 flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                                    {{ live_action('prevent|delete', {path : subFolder.realPath}) }}>
+                                    <twig:ux:icon name="iconamoon:trash" class="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            <!-- Icône + Nom + Infos -->
+                            <a class="flex flex-col items-center space-y-3 pt-4" {{ live_action('changeDir', {dir : dir ~ '/' ~ subFolder.relativePathname }) }}>
+                                <twig:ux:icon name="flat-color-icons:folder" class="w-16" />
+                                <span class="text-gray-700 dark:text-gray-300 font-medium text-center">{{ subFolder.filename }}</span>
+                                <div class="text-gray-500 dark:text-gray-400 text-sm text-center">
+                                    <div>{{ subFolder.size|bytes_to_human }}</div>
+                                    <div>{{ subFolder.mTime|date }}</div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+
+                    <!-- Boucle sur les fichiers et dossiers -->
+                    {% for file in files %}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group relative"
+                             draggable="true" data-path="{{ file.realPath }}"
+                             ondragstart="event.dataTransfer.setData('path', '{{ file.realPath }}');">
+
+                            <img src="{{ file.realPath|ux_filemanager_render }}" alt="" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl">
+
+                            <!-- Checkbox + Bouton de suppression -->
+                            <div class="flex items-center justify-between mb-2 relative">
+                                {{ _self.input_checkbox(file.realPath) }}
+
+                                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
+                                    <button class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                                        {{ live_action('prevent|delete', {path : file.realPath}) }}>
+                                        <twig:ux:icon name="iconamoon:trash" class="w-4 h-4" />
+                                    </button>
+
+                                    <button class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
+                                        {{ live_action('edit', {path : file.realPath}) }}>
+                                        <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Icône + Nom + Infos -->
+                            <a class="flex flex-col items-center space-y-3 pt-4 relative" {{ live_action('choose', {'path': file.realPath}) }}>
+                                <twig:ux:icon name="{{ file|mime_icon }}" class="w-16" />
+                                <span class="text-gray-700 dark:text-gray-300 font-medium text-center">{{ file.filename }}</span>
+                                <div class="text-gray-500 dark:text-gray-400 text-sm text-center">
+                                    <div>{{ file.size|bytes_to_human }}</div>
+                                    <div>{{ file.mTime|date }}</div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if editFile %}
+        <!-- Image Editor Panel (Right Sidebar) -->
+        <div id="image-editor" class="w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 h-full shadow-lg relative">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ 'edit_file.title'|trans }}</h2>
+
+                <!-- Image Preview -->
+                <div class="border border-gray-300 dark:border-gray-700 rounded-lg p-4">
+                    <img id="image-preview" src="{{ editFile.path|ux_filemanager_render }}" alt="Image preview" class="w-full rounded-lg">
+                </div>
+
+                <!-- Formulaire pour ALT et Auteur -->
+                <div class="mt-4 space-y-4 mb-4">
+                    <!-- Champ ALT -->
+                    <div>
+                        <label for="alt-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ 'edit_file.alt.label'|trans }}</label>
+                        <input data-model="norender|currentEditingAlt" type="text" id="alt-text" name="alt" placeholder="{{ 'edit_file.alt.placeholder'|trans }}"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Boutons d'actions -->
+                <div class="mt-6 space-y-2">
+                    <button class="w-full px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-800"
+                        {{ live_action('saveEdit') }}>{{ 'save'|trans }}</button>
+                    <button class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                        {{ live_action('edit', {path : ""}) }}>{{ 'back'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <dialog id="modal" class="backdrop:bg-gray-900 backdrop:bg-opacity-50 rounded-xl p-6 shadow-lg w-full max-w-md bg-white dark:bg-gray-900 dark:backdrop:bg-gray-800 dark:backdrop:bg-opacity-50 space-y-4" {{ stimulus_target('dialog', 'dialog') }}>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ 'dialog.new_folder.title'|trans }}</h2>
+        <input type="text" name="inputField" placeholder="{{ 'dialog.new_folder.input.placeholder'|trans }}"
+               class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+               data-model="newFolder">
+        <div class="flex justify-end space-x-2">
+            <button type="button" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                {{ stimulus_action('dialog', 'close') }} autofocus>{{ 'back'|trans }}</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800"
+                {{ live_action('createFolder') }}>{{ 'save'|trans }}</button>
+        </div>
+    </dialog>
+
+    <input type="file" name="upload[]" class="hidden" multiple {{ stimulus_target('ux-filemanager-dropzone', 'input') }}>
+</div>

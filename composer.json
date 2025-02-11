@@ -1,0 +1,48 @@
+{
+  "name": "akyoscommunication/ux-filemanager",
+  "type": "library",
+  "description": "UX filemanager for Symfony",
+  "keywords": [
+    "symfony-ux",
+    "PHP",
+    "attribute",
+    "live component",
+    "filemanager"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Lilian Carneau",
+      "email": "lilian.carneau@gmail.com"
+    },
+    {
+      "name": "Symfony Community",
+      "homepage": "https://symfony.com/contributors"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Akyos\\UXFileManager\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.3",
+    "symfony/ux-icons": "^2.19",
+    "symfony/ux-live-component": "^2.19"
+  },
+  "require-dev": {
+    "psr/log": "^1|^2|^3",
+    "symfony/dependency-injection": "^6.4|^7.0",
+    "symfony/form": "^6.4|^7.0",
+    "symfony/http-kernel": "^6.4|^7.0",
+    "symfony/security-bundle": "^6.4|^7.0",
+    "symfonycasts/tailwind-bundle": "^0.7.1"
+  },
+  "extra": {
+    "thanks": {
+      "name": "symfony/ux",
+      "url": "https://github.com/symfony/ux"
+    }
+  },
+  "minimum-stability": "stable"
+}

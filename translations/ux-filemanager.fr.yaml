@@ -1,0 +1,44 @@
+back: "Retour"
+save: "Enregistrer"
+
+other_spaces:
+    label: "Autres espaces"
+    change: "Changer"
+    empty: "Oh non... 😱 Vous n'avez pas d'autres espaces !"
+
+explore:
+    label: "Explorer"
+
+storage:
+    label: "Stockage"
+    remain: "%percent%% restant sur %total% utilisés"
+
+global:
+    search: "Rechercher..."
+    new_folder: "Nouveau dossier"
+    recents: "Récents"
+    bulk:
+        zip: "Télécharger"
+        delete: "Supprimer"
+        save: "Enregistrer"
+    order_by:
+        label: "Trier par"
+
+files:
+    empty: "Oh non... 😱 Vous n'avez pas de fichiers ni de dossiers !"
+    table:
+        name: "Nom"
+        size: "Taille"
+        mtime: "Modifié"
+
+dialog:
+    new_folder:
+        title: "Nouveau dossier"
+        input:
+            placeholder: "Entrez quelque chose..."
+
+edit_file:
+    title: "Éditer le fichier"
+    alt:
+        label: "Texte alternatif"
+        placeholder: "Texte alternatif"
