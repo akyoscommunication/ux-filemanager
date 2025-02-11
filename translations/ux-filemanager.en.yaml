@@ -1,0 +1,45 @@
+back: "Back"
+save: "Save"
+open_filemanager: "Open file manager"
+
+other_spaces:
+    label: "Other spaces"
+    change: "Change"
+    empty: "Oh no... 😱 You have no other spaces!"
+
+explore:
+    label: "Explore"
+
+storage:
+    label: "Storage"
+    remain: "%percent%% remaining out of %total% used"
+
+global:
+    search: "Search..."
+    new_folder: "New folder"
+    recents: "Recents"
+    bulk:
+        zip: "Download"
+        delete: "Delete"
+        save: "Save"
+    order_by:
+        label: "Sort by"
+
+files:
+    empty: "Oh no... 😱 You have no files or folders!"
+    table:
+        name: "Name"
+        size: "Size"
+        mtime: "Modified"
+
+dialog:
+    new_folder:
+        title: "New folder"
+        input:
+            placeholder: "Enter something..."
+
+edit_file:
+    title: "Edit file"
+    alt:
+        label: "Alternative text"
+        placeholder: "Alternative text"

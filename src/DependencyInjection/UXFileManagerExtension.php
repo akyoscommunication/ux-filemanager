@@ -16,7 +16,6 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
 {
     public function prepend(ContainerBuilder $container)
     {
-        // Register the Dropzone form theme if TwigBundle is available
         $bundles = $container->getParameter('kernel.bundles');
 
         if (isset($bundles['TwigBundle'])) {
@@ -36,6 +35,11 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
                 'asset_mapper' => [
                     'paths' => [
                         __DIR__.'/../../assets/dist' => '@akyoscommunication/ux-filemanager',
+                    ],
+                ],
+                'translator' => [
+                    'paths' => [
+                        __DIR__.'/../../translations',
                     ],
                 ],
             ]);

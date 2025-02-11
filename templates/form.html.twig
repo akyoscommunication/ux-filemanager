@@ -1,8 +1,10 @@
+{% trans_default_domain 'ux-filemanager' %}
+
 {%- block ux_filemanager_widget -%}
     <div {{ stimulus_controller('ux-filemanager') }} class="border border-dashed p-8 flex items-center justify-center">
         <input type="text" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
 
-        <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" {{ stimulus_action('filemanager', 'open') }}>Ouvrir le file manager</button>
+        <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" {{ stimulus_action('ux-filemanager', 'open') }}>{{ 'open_filemanager'|trans }}</button>
         <div class="ux-filemanager">
             <dialog {{ stimulus_target('ux-filemanager', 'modal') }} class="backdrop:bg-gray-900 backdrop:bg-opacity-50 dark:backdrop:bg-gray-800 dark:backdrop:bg-opacity-50 w-[80%] h-[80%] z-10 rounded-xl ux-filemanager--modal overflow-y-hidden resize" resize="true" resizable>
                 {% if app.request.server.get('HTTP_SEC_CH_UA_PLATFORM') is same as('"macOS"') %}
