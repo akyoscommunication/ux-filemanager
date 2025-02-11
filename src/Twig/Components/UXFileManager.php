@@ -19,7 +19,7 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
-#[AsLiveComponent]
+#[AsLiveComponent('UX:FileManager', template: '@UXFileManager/components/UXFileManager.html.twig')]
 final class UXFileManager extends AbstractController
 {
     use DefaultActionTrait, ComponentToolsTrait;

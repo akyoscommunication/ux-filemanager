@@ -60,10 +60,11 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+
         try {
             $loader->load('services.yaml');
         } catch (\Exception $e) {
-//            dd($e);
+            dd($e);
         }
     }
 

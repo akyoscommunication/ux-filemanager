@@ -1,0 +1,3 @@
+ux_filemanager:
+    resource: "../src/Controller/"
+    type: attribute
