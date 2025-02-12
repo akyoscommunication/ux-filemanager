@@ -6,7 +6,7 @@ import { Controller } from '@hotwired/stimulus';
 */
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-	static targets = ['modal', 'input']
+	static targets = ['modal', 'input', 'preview']
 	
 	connect() {
 		window.addEventListener('filemanager:choose', this.choose.bind(this));
@@ -23,6 +23,24 @@ export default class extends Controller {
 		this.inputTarget.value = e.detail.path;
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.close();
+		
+		const preview = e.detail.preview;
+		console.log(e);
+		if (preview) {
+			this.setPreview(preview);
+		}
+	}
+	
+	setPreview(url) {
+		this.previewTarget.src = url;
+		
+		if (!url) {
+			this.previewTarget.style.display = 'none';
+			
+			return;
+		}
+		
+		this.previewTarget.style.display = 'block';
 	}
 	
 	open() {

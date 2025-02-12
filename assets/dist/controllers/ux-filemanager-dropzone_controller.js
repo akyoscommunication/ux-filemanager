@@ -70,7 +70,7 @@ export default class extends Controller {
         e.preventDefault();
         const toElement = e.toElement;
         // get closest dropzone
-        const dropzone = toElement.closest('[data-dropzone-target="dropzone"]');
+        const dropzone = toElement.closest('[data-ux-filemanager-dropzone-target="dropzone"]');
         const path = dropzone.getAttribute('data-path');
         
         this.dropzoneTargets.forEach((d) => {

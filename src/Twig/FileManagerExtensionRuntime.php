@@ -10,43 +10,16 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 {
-    const CONFIGURATION = [
-        'optimize' => [
-            'enabled' => true,
-            'quality' => 80,
-        ],
-        'sizes' => [
-            'thumb' => [
-                'width' => 100,
-                'height' => 100,
-            ],
-            'small' => [
-                'width' => 200,
-                'height' => 200,
-            ],
-            'medium' => [
-                'width' => 400,
-                'height' => 400,
-            ],
-        ],
-        'paths' => [
-            'upload' => [
-                'path' => '/Volumes/SSD/www/ux-file-manager/public/upload',
-                'security' => null,
-                'name' => 'Dossier upload à la bonne franquette mon garçon',
-            ],
-            'secured_files' => [
-                'path' => '/Volumes/SSD/www/ux-file-manager/secured_files',
-                'security' => null,
-                'name' => 'Secured Files',
-            ]
-        ]
-    ];
-
     public function __construct(
+        private array $config = [],
         private UrlGeneratorInterface $urlGenerator,
-        private Security $security
+        private Security $security,
     ) {}
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
 
     public function getConfigurationKey(string $path): string
     {
@@ -55,7 +28,7 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
             $path = dirname($path);
         }
 
-        $availablePaths = array_map(fn($p) => $p['path'], self::CONFIGURATION['paths']);
+        $availablePaths = array_map(fn($p) => $p['path'], $this->getConfig()['paths']);
 
         // if the path is the root path
         if (in_array($path, $availablePaths, true)) {
@@ -75,7 +48,7 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
     {
         $keyOfConfiguration = $this->getConfigurationKey($path);
 
-        return self::CONFIGURATION['paths'][$keyOfConfiguration];
+        return $this->getConfig()['paths'][$keyOfConfiguration];
     }
 
     public function render($path)
@@ -111,5 +84,11 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
     public function splFileInfo(string $path): \SplFileInfo
     {
         return new \SplFileInfo($path);
+    }
+
+    public function relativePath(string $path, string $key): string
+    {
+        $path = str_replace($this->getConfig()['paths'][$key]['path'], '', $path);
+        return ltrim($path, '/');
     }
 }

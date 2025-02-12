@@ -80,7 +80,7 @@ final class UXFileManager extends AbstractController
 
     public function getOriginalPath(): string
     {
-        return FileManagerExtensionRuntime::CONFIGURATION['paths'][$this->path]['path'];
+        return $this->fileManagerExtensionRuntime->getConfig()['paths'][$this->path]['path'];
     }
 
     #[ExposeInTemplate(self::RECENTLY_USED_TOKEN)]
@@ -94,7 +94,7 @@ final class UXFileManager extends AbstractController
     {
         $otherSpaces = [];
 
-        foreach (FileManagerExtensionRuntime::CONFIGURATION['paths'] as $key => $path) {
+        foreach ($this->fileManagerExtensionRuntime->getConfig()['paths'] as $key => $path) {
             if ($path['path'] === $this->getOriginalPath()) {
                 continue;
             }
@@ -333,12 +333,25 @@ final class UXFileManager extends AbstractController
     {
         $session = $request->getSession();
 
+        $config = $this->fileManagerExtensionRuntime->getConfig()['paths'][$this->path] ?? null;
+        if (!$config) {
+            throw $this->createNotFoundException();
+        }
+
+        dd($path);
+
+        $fullPath = $config['path'] . $path;
+
         // keep only 5 recently used files
         $recentlyUsed = $session->get(self::RECENTLY_USED_TOKEN, []);
-        $recentlyUsed = array_slice(array_unique(array_merge([$path], $recentlyUsed)), 0, 5);
+        $recentlyUsed = array_slice(array_unique(array_merge([$fullPath], $recentlyUsed)), 0, 5);
         $session->set(self::RECENTLY_USED_TOKEN, $recentlyUsed);
 
-        $this->dispatchBrowserEvent('filemanager:choose', ['path' => $path, 'inputId' => $this->inputId]);
+        $this->dispatchBrowserEvent('filemanager:choose', [
+            'path' => $fullPath,
+            'inputId' => $this->inputId,
+            'preview' => $this->generateUrl('ux.file_manager.render', ['path' => '/'.$path, 'configurationKey' => $this->path])
+        ]);
     }
 
     #[LiveAction]

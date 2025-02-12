@@ -16,7 +16,8 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {
-          "@akyoscommunication/ux-filemanager/dist/app.css": true
+          "@akyoscommunication/ux-filemanager/dist/app.css": true,
+          "@akyoscommunication/ux-filemanager/dist/main.js": true
         }
       },
       "ux-filemanager-dropzone": {
@@ -28,7 +29,8 @@
       }
     },
     "importmap": {
-      "@hotwired/stimulus": "^3.0.0"
+      "@hotwired/stimulus": "^3.0.0",
+      "@stimulus-components/dialog": "^1.0.1"
     }
   },
   "dependencies": {

@@ -15,10 +15,11 @@ final class FileManagerController extends AbstractController
     #[Route('/render', name: 'render')]
     public function streamFile(
         #[MapQueryParameter] string $path,
-        #[MapQueryParameter] string $configurationKey
+        #[MapQueryParameter] string $configurationKey,
+        FileManagerExtensionRuntime $fileManagerExtensionRuntime
     ): BinaryFileResponse
     {
-        $configuration = FileManagerExtensionRuntime::CONFIGURATION['paths'][$configurationKey] ?? null;
+        $configuration = $fileManagerExtensionRuntime->getConfig()['paths'][$configurationKey] ?? null;
 
         if (!$configuration) {
             throw $this->createNotFoundException();
