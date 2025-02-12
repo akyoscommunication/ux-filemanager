@@ -6,10 +6,15 @@ import { Controller } from '@hotwired/stimulus';
 */
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-	static targets = ['modal', 'input', 'preview']
+	static values = {data: String, dataMimeType: String}
+	static targets = ['modal', 'input', 'preview', 'previewImage', 'previewEmbed']
 	
 	connect() {
 		window.addEventListener('filemanager:choose', this.choose.bind(this));
+		
+		if (this.dataValue) {
+			this.setPreview(this.dataValue, this.dataMimeTypeValue);
+		}
 	}
 	
 	choose(e) {
@@ -25,22 +30,31 @@ export default class extends Controller {
 		this.close();
 		
 		const preview = e.detail.preview;
-		console.log(e);
 		if (preview) {
-			this.setPreview(preview);
+			this.setPreview(preview, e.detail.mimeType);
 		}
 	}
 	
-	setPreview(url) {
-		this.previewTarget.src = url;
+	setPreview(url, mimeType) {
+		this.previewTargets.forEach(target => {
+			target.style.display = 'none';
+		});
 		
 		if (!url) {
-			this.previewTarget.style.display = 'none';
-			
 			return;
 		}
 		
-		this.previewTarget.style.display = 'block';
+		let target = this.previewImageTarget;
+		
+		switch (mimeType) {
+			case 'application/pdf':
+			case 'pdf':
+				target = this.previewEmbedTarget;
+				break;
+		}
+		
+		target.src = url;
+		target.style.display = 'block';
 	}
 	
 	open() {
@@ -83,5 +97,13 @@ export default class extends Controller {
 		setTimeout(() => {
 			this.modalTarget.close();
 		}, 300);
+	}
+	
+	reset(e) {
+		e.preventDefault();
+		
+		this.inputTarget.value = '';
+		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+		this.setPreview("");
 	}
 }

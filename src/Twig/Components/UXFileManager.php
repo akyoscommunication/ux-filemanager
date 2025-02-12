@@ -338,9 +338,7 @@ final class UXFileManager extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        dd($path);
-
-        $fullPath = $config['path'] . $path;
+        $fullPath = $config['path'] . '/' . $path;
 
         // keep only 5 recently used files
         $recentlyUsed = $session->get(self::RECENTLY_USED_TOKEN, []);
@@ -350,7 +348,8 @@ final class UXFileManager extends AbstractController
         $this->dispatchBrowserEvent('filemanager:choose', [
             'path' => $fullPath,
             'inputId' => $this->inputId,
-            'preview' => $this->generateUrl('ux.file_manager.render', ['path' => '/'.$path, 'configurationKey' => $this->path])
+            'preview' => $this->generateUrl('ux.file_manager.render', ['path' => '/'.$path, 'configurationKey' => $this->path]),
+            'mimeType' => mime_content_type($fullPath)
         ]);
     }
 

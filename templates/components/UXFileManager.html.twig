@@ -87,7 +87,13 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-6 dark:bg-gray-900 overflow-x-scroll pb-12" {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }} data-animation="false">
+    <div class="flex-1 p-6 dark:bg-gray-900 overflow-x-scroll pb-12 relative" {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }} data-animation="false">
+        <div class="absolute inset-0 bg-black/25 text-white rounded z-20 col-span-12" data-loading="action(upload)|show">
+            <div class="flex items-center justify-center w-full h-full">
+                <twig:ux:icon name="svg-spinners:ring-resize" class="w-16 h-16" />
+            </div>
+        </div>
+
         <!-- Header -->
         <div class="flex justify-between items-center gap-2 mb-6 sticky top-0 py-4 bg-gray-50 dark:bg-gray-900 z-10">
             <!-- Barre de recherche -->

@@ -18,7 +18,7 @@ class FileManagerExtension extends AbstractExtension
             // filter that convert path to SplFileInfo object
             new TwigFilter('spl_file_info', [FileManagerExtensionRuntime::class, 'splFileInfo']),
             new TwigFilter('mime_icon', [FileManagerExtensionRuntime::class, 'getMimeIcon']),
-            // filter that return the relative path of the file 
+            // filter that return the relative path of the file
             new TwigFilter('relative_path', [FileManagerExtensionRuntime::class, 'relativePath']),
         ];
     }
