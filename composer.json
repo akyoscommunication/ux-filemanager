@@ -33,6 +33,7 @@
   "require-dev": {
     "psr/log": "^1|^2|^3",
     "symfony/dependency-injection": "^6.4|^7.0",
+    "doctrine/orm": "^3.3.2",
     "symfony/form": "^6.4|^7.0",
     "symfony/http-kernel": "^6.4|^7.0",
     "symfony/security-bundle": "^6.4|^7.0",

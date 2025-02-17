@@ -3,6 +3,7 @@
 namespace Akyos\UXFileManager\Twig;
 
 use Akyos\UXFileManager\Enum\Mimes;
+use Akyos\UXFileManager\Repository\FileRepository;
 use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -14,6 +15,7 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
         private array $config = [],
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
+        private FileRepository $fileRepository
     ) {}
 
     public function getConfig(): array
@@ -90,5 +92,18 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
     {
         $path = str_replace($this->getConfig()['paths'][$key]['path'], '', $path);
         return ltrim($path, '/');
+    }
+
+    public function manage(string $oldPath, string $newPath): void
+    {
+        $oldFile = $this->fileRepository->findOneBy(['path' => $oldPath]);
+
+        if (!$oldFile) {
+            return;
+        }
+
+        $oldFile->setPath($newPath);
+
+        $this->fileRepository->save($oldFile, true);
     }
 }

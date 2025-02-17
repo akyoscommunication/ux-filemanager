@@ -30,6 +30,22 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
             ]);
         }
 
+        if (isset($bundles['DoctrineBundle'])) {
+            $container->prependExtensionConfig('doctrine', [
+                'orm' => [
+                    'mappings' => [
+                        'UXFileManagerBundle' => [
+                            'is_bundle' => true,
+                            'type' => 'attribute',
+                            'dir' => 'src/Entity',
+                            'prefix' => 'Akyos\\UXFileManager\\Entity',
+                            'alias' => 'UXFileManager',
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
         if ($this->isAssetMapperAvailable($container)) {
             $container->prependExtensionConfig('framework', [
                 'asset_mapper' => [
