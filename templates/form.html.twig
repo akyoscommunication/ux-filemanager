@@ -2,13 +2,14 @@
 
 {%- block ux_filemanager_widget -%}
     {% set mimeType = "" %}
+    {% set renderUrl = "" %}
     {% if value %}
-        {% set spl_value = value|spl_file_info %}
-        {% set value = spl_value.realPath|ux_filemanager_render %}
-        {% set mimeType = spl_value.extension %}
+        {% set ux_file = value|ux_filemanager_file %}
+        {% set renderUrl = ux_file.path|ux_filemanager_render %}
+        {% set mimeType = ux_file.mime %}
     {% endif %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : value, 'dataMimeType': mimeType}) }} class="ux-filemanager">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager">
         <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
 
         <div class="relative w-48">

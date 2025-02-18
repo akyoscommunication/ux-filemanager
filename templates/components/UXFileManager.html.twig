@@ -160,7 +160,7 @@
                                 </div>
                             </div>
 
-                            <a class="flex flex-col items-center space-y-3 pt-4 absolute inset-0" {{ live_action('choose', {'path': file.path}) }}></a>
+                            <a class="flex flex-col items-center space-y-3 pt-4 absolute inset-0" {{ live_action('choose', {'path': file.path|relative_path(path)}) }}></a>
                         </div>
                     {% endfor %}
                 </div>

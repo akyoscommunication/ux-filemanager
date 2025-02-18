@@ -54,6 +54,29 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
         return $this->getConfig()['paths'][$keyOfConfiguration];
     }
 
+    public function getFrontendFile(int $id): array
+    {
+        $fileDB = $this->fileRepository->find($id);
+
+        if (!$fileDB) {
+            return [];
+        }
+
+        $path = $fileDB->getPath();
+        $splInfo = new \SplFileInfo($path);
+
+        return [
+            'id' => $fileDB->getId(),
+            'path' => $path,
+            'name' => $splInfo->getFilename(),
+            'size' => $splInfo->getSize(),
+            'sizeHuman' => $this->bytesToHuman($splInfo->getSize()),
+            'mime' => mime_content_type($path),
+            'icon' => $this->getMimeIcon($splInfo),
+            'alt' => $fileDB->getAlt(),
+        ];
+    }
+
     public function render($path)
     {
         if (!$this->security->isGranted(FileManagerVoter::VIEW, $path)) {
@@ -82,11 +105,6 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
     {
         $mime = mime_content_type($file->getPathname());
         return Mimes::from($mime)->getIcon();
-    }
-
-    public function splFileInfo(string $path): \SplFileInfo
-    {
-        return new \SplFileInfo($path);
     }
 
     public function relativePath(string $path, string $key): string

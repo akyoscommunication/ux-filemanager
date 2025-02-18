@@ -11,12 +11,11 @@ class FileManagerExtension extends AbstractExtension
     {
         return [
             new TwigFilter('ux_filemanager_render', [FileManagerExtensionRuntime::class, 'render']),
+            new TwigFilter('ux_filemanager_file', [FileManagerExtensionRuntime::class, 'getFrontendFile']),
             new TwigFilter('dirname', 'dirname'),
             new TwigFilter('strpos', 'strpos'),
             // filter that convert bytes to human readable format
             new TwigFilter('bytes_to_human', [FileManagerExtensionRuntime::class, 'bytesToHuman']),
-            // filter that convert path to SplFileInfo object
-            new TwigFilter('spl_file_info', [FileManagerExtensionRuntime::class, 'splFileInfo']),
             new TwigFilter('mime_icon', [FileManagerExtensionRuntime::class, 'getMimeIcon']),
             // filter that return the relative path of the file
             new TwigFilter('relative_path', [FileManagerExtensionRuntime::class, 'relativePath']),
