@@ -40,6 +40,6 @@ final class FileManagerVoter extends Voter
             return true;
         }
 
-        return $this->security->isGranted($configuration['security']);
+        return $this->security->isGranted($configuration['security'], $path);
     }
 }

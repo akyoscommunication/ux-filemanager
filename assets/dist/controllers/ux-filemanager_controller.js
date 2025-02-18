@@ -25,7 +25,7 @@ export default class extends Controller {
 			return;
 		}
 		
-		this.inputTarget.value = e.detail.id;
+		this.inputTarget.value = e.detail.path;
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.close();
 		
@@ -57,20 +57,25 @@ export default class extends Controller {
 		target.style.display = 'block';
 	}
 	
-	open() {
+	open(e) {
+		e.preventDefault();
+		
 		this.modalTarget.style.transition = '';
 		this.modalTarget.style.transform = 'scale(1) translateX(0) translateY(0)';
 		document.body.style.overflow = 'hidden';
 		this.modalTarget.showModal();
 	}
 	
-	close() {
+	close(e) {
+		e.preventDefault();
+		
 		document.body.style.overflow = '';
 		this.modalTarget.close();
 	}
 	
 	resize(e) {
 		e.preventDefault();
+		
 		this.modalTarget.setAttribute('resize', this.modalTarget.getAttribute('resize') === 'true' ? 'false' : 'true');
 		
 		this.modalTarget.style.transition = 'width, height 0.3s';

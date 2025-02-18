@@ -88,7 +88,9 @@ final class UXFileManager extends AbstractController
     #[ExposeInTemplate(self::RECENTLY_USED_TOKEN)]
     public function getRecentlyUsed(): array
     {
-        return array_map(fn($path) => $this->fileRepository->find($path), $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, []));
+        return array_filter(
+            array_map(fn($id) => $this->fileRepository->find($id), $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, []))
+        );
     }
 
     #[ExposeInTemplate('otherSpaces')]

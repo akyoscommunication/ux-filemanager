@@ -68,7 +68,12 @@ export default class extends Controller {
     
     drop(e) {
         e.preventDefault();
-        const toElement = e.toElement;
+        let toElement = e.toElement ?? e.target;
+        
+        if (!toElement) {
+            return;
+        }
+        
         // get closest dropzone
         const dropzone = toElement.closest('[data-ux-filemanager-dropzone-target="dropzone"]');
         const path = dropzone.getAttribute('data-path');
@@ -78,7 +83,7 @@ export default class extends Controller {
         });
         
         const file_to_move = e.dataTransfer.getData('path');
-
+        
         
         if (file_to_move && path) {
             this.liveComponent.action('move', {from: file_to_move, to: path});
@@ -91,7 +96,7 @@ export default class extends Controller {
         this.inputTarget.files = files;
         
         this.liveComponent.files("upload[]", this.inputTarget);
-
+        
         this.liveComponent.action('upload', {path});
     }
 }

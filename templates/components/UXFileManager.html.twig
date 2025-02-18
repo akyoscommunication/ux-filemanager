@@ -1,5 +1,7 @@
 {% trans_default_domain 'ux-filemanager' %}
 
+{% set is_granted = is_granted(constant('Akyos\\UXFileManager\\Security\\Voter\\FileManagerVoter::VIEW'), realPath) %}
+
 {% macro tree_item(folder, realPath, path = "") %}
     {% for title, s in folder %}
         {% set pathForItem = path ~ "/" ~ title %}
@@ -39,7 +41,7 @@
     </label>
 {% endmacro %}
 
-<div{{ attributes.defaults({class: 'flex h-full bg-gray-50 dark:bg-gray-900'})
+<div{{ attributes.defaults({class: 'ux-filemanager flex h-full bg-gray-50 dark:bg-gray-900'})
     .add(stimulus_controller('dialog'))
     .add(stimulus_action('dialog', 'backdropClose'))
 
@@ -70,12 +72,14 @@
             </div>
         </div>
 
-        <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg">
-            <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'explore.label'|trans }}</div>
-            <div class="overflow-scroll max-h-96">
-                {{ _self.tree_item(tree, realPath) }}
+        {% if is_granted %}
+            <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg">
+                <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'explore.label'|trans }}</div>
+                <div class="overflow-scroll max-h-96">
+                    {{ _self.tree_item(tree, realPath) }}
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-lg" data-live-ignore>
             <div class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{{ 'storage.label'|trans }}</div>
@@ -177,7 +181,11 @@
         </section>
 
         {% set totalItem = subFolders|length + files|length + (backFolder is not same as(null) ? 1 : 0) %}
-        {% if totalItem == 0 %}
+        {% if not is_granted %}
+            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-300" role="alert">
+                {{ 'not_granted'|trans }}
+            </div>
+        {% elseif totalItem == 0 %}
             <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
                 {{ 'files.empty'|trans }}
             </div>

@@ -742,6 +742,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   width: 1rem;
 }
 
+.ux-filemanager .w-48 {
+  width: 12rem;
+}
+
 .ux-filemanager .w-5 {
   width: 1.25rem;
 }
@@ -773,10 +777,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-filemanager .w-full {
   width: 100%;
-}
-
-.ux-filemanager .max-w-48 {
-  max-width: 12rem;
 }
 
 .ux-filemanager .max-w-md {
@@ -1037,6 +1037,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .ux-filemanager .bg-green-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
+}
+
+.ux-filemanager .bg-red-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
 }
 
 .ux-filemanager .bg-red-500 {
@@ -1504,6 +1509,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   .ux-filemanager .dark\:text-red-200 {
     --tw-text-opacity: 1;
     color: rgb(254 202 202 / var(--tw-text-opacity, 1));
+  }
+
+  .ux-filemanager .dark\:text-red-300 {
+    --tw-text-opacity: 1;
+    color: rgb(252 165 165 / var(--tw-text-opacity, 1));
   }
 
   .ux-filemanager .dark\:text-white {
