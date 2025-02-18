@@ -352,8 +352,8 @@ final class UXFileManager extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // get the full path of directory
-        $pathOfDir = trim($path, '/');
+        // remove / at the end of the path if exists
+        $pathOfDir = rtrim($config['path'], '/');
         $fullPath = $pathOfDir . '/' . $path;
         $file = $this->fileManagerExtensionRuntime->getFile($fullPath, true);
         $id = $file->getId();
