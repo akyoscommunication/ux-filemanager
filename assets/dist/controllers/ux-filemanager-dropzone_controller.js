@@ -78,6 +78,7 @@ export default class extends Controller {
         });
         
         const file_to_move = e.dataTransfer.getData('path');
+
         
         if (file_to_move && path) {
             this.liveComponent.action('move', {from: file_to_move, to: path});
