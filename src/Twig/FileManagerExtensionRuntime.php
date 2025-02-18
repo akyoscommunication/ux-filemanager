@@ -8,6 +8,7 @@ use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use Akyos\UXFileManager\Entity\File;
 
 class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 {
@@ -94,16 +95,60 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
         return ltrim($path, '/');
     }
 
-    public function manage(string $oldPath, string $newPath): void
+    // TODO: mettre toutes les methodes suivantes dans un service dédié
+    public function getFile(string $path, bool $save = false): File
     {
-        $oldFile = $this->fileRepository->findOneBy(['path' => $oldPath]);
+        $file = $this->fileRepository->findOneBy(['path' => $path]);
 
-        if (!$oldFile) {
-            return;
+        if (!$file) {
+            $file = new File();
+            $file->setPath($path);
         }
 
-        $oldFile->setPath($newPath);
+        if ($save) {
+            $this->fileRepository->save($file, true);
+        }
 
-        $this->fileRepository->save($oldFile, true);
+        return $file;
+    }
+
+    public function managePathInDirectory(string $oldPath, string $newPath): void
+    {
+        $files = $this->fileRepository->findFileInDirectory($oldPath)->getQuery()->getResult();
+
+        foreach ($files as $file) {
+            $file->setPath(str_replace($oldPath, $newPath, $file->getPath()));
+            $this->fileRepository->save($file, true);
+        }
+    }
+
+    public function managePath(string $oldPath, ?string $newPath = null): void
+    {
+        $file = $this->getFile($oldPath);
+
+        $pathToSave = $newPath ?? $oldPath;
+
+        $file->setPath($pathToSave);
+
+        $this->fileRepository->save($file, true);
+    }
+
+    public function deleteFile(string $path): void
+    {
+        $file = $this->getFile($path);
+
+        if ($file->getId()) {
+            $this->fileRepository->remove($file, true);
+        }
+    }
+
+    public function setAlt(string $path, string $alt): void
+    {
+        $file = $this
+            ->getFile($path)
+            ->setAlt($alt)
+        ;
+
+        $this->fileRepository->save($file, true);
     }
 }

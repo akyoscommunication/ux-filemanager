@@ -2,6 +2,7 @@
 
 namespace Akyos\UXFileManager\Twig\Components;
 
+use Akyos\UXFileManager\Repository\FileRepository;
 use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
 use Akyos\UXFileManager\Twig\FileManagerExtensionRuntime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -76,6 +77,7 @@ final class UXFileManager extends AbstractController
         private readonly FileManagerExtensionRuntime $fileManagerExtensionRuntime,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
+        private readonly FileRepository $fileRepository
     ) {}
 
     public function getOriginalPath(): string
@@ -86,7 +88,8 @@ final class UXFileManager extends AbstractController
     #[ExposeInTemplate(self::RECENTLY_USED_TOKEN)]
     public function getRecentlyUsed(): array
     {
-        return $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, []);
+        $this->requestStack->getSession()->set(self::RECENTLY_USED_TOKEN, []);
+        return array_map(fn($path) => $this->fileRepository->find($path), $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, []));
     }
 
     #[ExposeInTemplate('otherSpaces')]
@@ -180,13 +183,12 @@ final class UXFileManager extends AbstractController
             return null;
         }
 
-        $alt = shell_exec('exiftool -ImageDescription ' . $this->currentEditingPath . ' -s3');
+        $file = $this->fileManagerExtensionRuntime->getFile($this->currentEditingPath);
 
-        $this->currentEditingAlt = $alt ?? '';
+        $this->currentEditingAlt = $file->getAlt() ?? '';
 
         return [
-            'path' => $this->currentEditingPath,
-            'alt' => $alt
+            'path' => $file->getPath(),
         ];
     }
 
@@ -266,6 +268,7 @@ final class UXFileManager extends AbstractController
     public function move(#[LiveArg] string $from, #[LiveArg] string $to): void
     {
         $fileSystem = new Filesystem();
+        $isDirFrom = is_dir($from);
 
         // $to is dir, $from is file
         if (is_dir($to)) {
@@ -279,6 +282,12 @@ final class UXFileManager extends AbstractController
         } else if (is_dir($from) && $from !== dirname($to)) {
             $fileSystem->mirror($from, $to);
             $fileSystem->remove($from);
+        }
+
+        if ($isDirFrom) {
+            $this->fileManagerExtensionRuntime->managePathInDirectory($from, $to);
+        } else {
+            $this->fileManagerExtensionRuntime->managePath($from, $to);
         }
     }
 
@@ -294,6 +303,8 @@ final class UXFileManager extends AbstractController
 
                 // optimize image with imagick
                 shell_exec('convert ' . $pathTo . '/' . $file->getClientOriginalName() . ' -resize 1920x1080 ' . $pathTo . '/' . $file->getClientOriginalName());
+
+                $this->fileManagerExtensionRuntime->managePath($pathTo . '/' . $file->getClientOriginalName());
             } catch (\Exception $e) {
                 dd($e->getMessage(), $pathTo);
             }
@@ -307,6 +318,8 @@ final class UXFileManager extends AbstractController
 
         if ($fileSystem->exists($path)) {
             $fileSystem->remove($path);
+
+            $this->fileManagerExtensionRuntime->deleteFile($path);
         }
     }
 
@@ -325,7 +338,7 @@ final class UXFileManager extends AbstractController
     #[LiveAction]
     public function saveEdit(): void
     {
-        shell_exec('exiftool -overwrite_original -ImageDescription="' . $this->currentEditingAlt . '" ' . $this->currentEditingPath . ' -s3');
+        $this->fileManagerExtensionRuntime->setAlt($this->currentEditingPath, $this->currentEditingAlt);
     }
 
     #[LiveAction]
@@ -338,15 +351,22 @@ final class UXFileManager extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $fullPath = $config['path'] . '/' . $path;
+        // get the full path of directory
+        $pathOfDir = trim($path, '/');
+        $fullPath = $pathOfDir . '/' . $path;
+        $file = $this->fileManagerExtensionRuntime->getFile($fullPath, true);
+        $id = $file->getId();
 
         // keep only 5 recently used files
         $recentlyUsed = $session->get(self::RECENTLY_USED_TOKEN, []);
-        $recentlyUsed = array_slice(array_unique(array_merge([$fullPath], $recentlyUsed)), 0, 5);
+        $recentlyUsed = array_slice(array_unique(array_merge([$id], $recentlyUsed)), 0, 5);
         $session->set(self::RECENTLY_USED_TOKEN, $recentlyUsed);
+
+        $this->fileManagerExtensionRuntime->managePath($fullPath);
 
         $this->dispatchBrowserEvent('filemanager:choose', [
             'path' => $fullPath,
+            'id' => $id,
             'inputId' => $this->inputId,
             'preview' => $this->generateUrl('ux.file_manager.render', ['path' => '/'.$path, 'configurationKey' => $this->path]),
             'mimeType' => mime_content_type($fullPath)

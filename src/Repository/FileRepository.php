@@ -2,7 +2,7 @@
 
 namespace Akyos\UXFileManager\Repository;
 
-use Akyos\UXFileManager\File;
+use Akyos\UXFileManager\Entity\File;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,10 +18,31 @@ class FileRepository extends ServiceEntityRepository
 
     public function save(File $file, bool $flush = false): void
     {
-        $this->_em->persist($file);
+        $this->getEntityManager()->persist($file);
 
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
+    }
+
+    public function remove(File $file, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($file);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function findFileInDirectory(string $path)
+    {
+        $qb = $this->createQueryBuilder('f');
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->like('f.path', ':path')
+            )
+            ->setParameter('path', $path.'%')
+        ;
     }
 }

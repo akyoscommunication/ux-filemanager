@@ -25,7 +25,7 @@ export default class extends Controller {
 			return;
 		}
 		
-		this.inputTarget.value = e.detail.path;
+		this.inputTarget.value = e.detail.id;
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.close();
 		
