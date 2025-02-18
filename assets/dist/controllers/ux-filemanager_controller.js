@@ -25,7 +25,7 @@ export default class extends Controller {
 			return;
 		}
 		
-		this.inputTarget.value = e.detail.path;
+		this.inputTarget.value = e.detail.id;
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.close();
 		
@@ -57,18 +57,14 @@ export default class extends Controller {
 		target.style.display = 'block';
 	}
 	
-	open(e) {
-		e.preventDefault();
-		
+	open() {
 		this.modalTarget.style.transition = '';
 		this.modalTarget.style.transform = 'scale(1) translateX(0) translateY(0)';
 		document.body.style.overflow = 'hidden';
 		this.modalTarget.showModal();
 	}
 	
-	close(e) {
-		e.preventDefault();
-		
+	close() {
 		document.body.style.overflow = '';
 		this.modalTarget.close();
 	}
