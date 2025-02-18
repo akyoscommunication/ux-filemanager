@@ -14,8 +14,8 @@
 
         <div class="relative w-48">
             <div class="aspect-square rounded-lg border overflow-hidden">
-                <img src="" alt="Preview" class="object-cover hidden" {{ stimulus_target('ux-filemanager', 'preview previewImage') }}>
-                <embed src="" class="object-cover h-full w-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewEmbed') }}>
+                <img src="" alt="Preview" class="object-cover w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewImage') }}>
+                <embed src="" class="object-cover h-full w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewEmbed') }}>
             </div>
             <div class="flex gap-2 absolute top-1 right-1">
                 <button type="button" class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"

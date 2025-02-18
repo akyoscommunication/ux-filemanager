@@ -70,7 +70,7 @@ enum Mimes: string
             self::DOC, self::DOCX => 'catppuccin:ms-word',
             self::XLS, self::XLSX => 'catppuccin:ms-excel',
             self::PPT, self::PPTX => 'catppuccin:ms-powerpoint',
-            self::ZIP, self::TAR, self::GZIP, self::BZIP, self::BZIP2, self::RAR, self::SEVENZIP => 'catppuccin:file',
+            self::ZIP, self::TAR, self::GZIP, self::BZIP, self::BZIP2, self::RAR, self::SEVENZIP => 'ph:file-zip',
             self::TEXT, self::CSV, self::JSON, self::XML, self::HTML, self::CSS, self::JAVASCRIPT, self::TYPESCRIPT, self::PHP, self::JAVA => 'catppuccin:vscode',
             default => 'catppuccin:file',
         };

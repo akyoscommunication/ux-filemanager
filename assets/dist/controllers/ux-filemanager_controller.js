@@ -44,12 +44,16 @@ export default class extends Controller {
 			return;
 		}
 		
-		let target = this.previewImageTarget;
+		let target = this.previewEmbedTarget;
 		
 		switch (mimeType) {
-			case 'application/pdf':
-			case 'pdf':
-				target = this.previewEmbedTarget;
+			case 'image/jpeg':
+			case 'image/png':
+			case 'image/gif':
+			case 'image/svg+xml':
+			case 'image/webp':
+			case 'image/bmp':
+				target = this.previewImageTarget;
 				break;
 		}
 		

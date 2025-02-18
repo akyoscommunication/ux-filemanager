@@ -2,10 +2,12 @@
 
 namespace Akyos\UXFileManager\Controller;
 
+use Akyos\UXFileManager\Enum\Mimes;
 use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
 use Akyos\UXFileManager\Twig\FileManagerExtensionRuntime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -17,7 +19,7 @@ final class FileManagerController extends AbstractController
         #[MapQueryParameter] string $path,
         #[MapQueryParameter] string $configurationKey,
         FileManagerExtensionRuntime $fileManagerExtensionRuntime
-    ): BinaryFileResponse
+    ): Response
     {
         $configuration = $fileManagerExtensionRuntime->getConfig()['paths'][$configurationKey] ?? null;
 
@@ -33,6 +35,11 @@ final class FileManagerController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return new BinaryFileResponse($pathToFile);
+        $mime = mime_content_type($pathToFile);
+
+        return match ($mime) {
+            'application/zip' => $this->render('@UXFileManager/render.html.twig', ['mime' => Mimes::from($mime)]),
+            default => new BinaryFileResponse($pathToFile),
+        };
     }
 }
