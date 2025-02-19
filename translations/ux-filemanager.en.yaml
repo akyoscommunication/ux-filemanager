@@ -1,6 +1,7 @@
 back: "Back"
 save: "Save"
 open_filemanager: "Open file manager"
+root: "Root"
 
 other_spaces:
     label: "Other spaces"

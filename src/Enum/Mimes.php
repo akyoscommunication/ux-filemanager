@@ -75,4 +75,38 @@ enum Mimes: string
             default => 'catppuccin:file',
         };
     }
+
+    static public function isEmbed(self $mime): bool
+    {
+        return in_array($mime, [
+            self::PDF,
+            self::DOC,
+            self::DOCX,
+            self::XLS,
+            self::XLSX,
+            self::PPT,
+            self::PPTX,
+
+            self::ZIP,
+            self::TAR,
+            self::GZIP,
+            self::BZIP,
+            self::BZIP2,
+            self::RAR,
+            self::SEVENZIP,
+        ]);
+    }
+
+    static public function isRenderIco(self $mime): bool
+    {
+        return in_array($mime, [
+            self::ZIP,
+            self::TAR,
+            self::GZIP,
+            self::BZIP,
+            self::BZIP2,
+            self::RAR,
+            self::SEVENZIP,
+        ]);
+    }
 }

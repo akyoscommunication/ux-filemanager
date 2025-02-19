@@ -11,6 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -77,7 +78,8 @@ final class UXFileManager extends AbstractController
         private readonly FileManagerExtensionRuntime $fileManagerExtensionRuntime,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly FileRepository $fileRepository
+        private readonly FileRepository $fileRepository,
+        private readonly TranslatorInterface $translator
     ) {}
 
     public function getOriginalPath(): string
@@ -212,7 +214,10 @@ final class UXFileManager extends AbstractController
         $finder->directories()->in($this->getOriginalPath());
 
         $tree = [
-            "/" => []
+            '' => [
+                'name' => $this->translator->trans('root', domain: 'ux_filemanager'),
+                'children' => []
+            ]
         ];
 
         foreach ($finder as $directory) {
@@ -222,14 +227,17 @@ final class UXFileManager extends AbstractController
 
             $folders = explode('/', $path);
 
-            $current = &$tree["/"];
+            $current = &$tree[""];
 
             foreach ($folders as $folder) {
-                if (!isset($current[$folder])) {
-                    $current[$folder] = [];
+                if (!isset($current['children'][$folder])) {
+                    $current['children'][$folder] = [
+                        'name' => $folder,
+                        'children' => []
+                    ];
                 }
 
-                $current = &$current[$folder];
+                $current = &$current['children'][$folder];
             }
 
             unset($current);
@@ -301,11 +309,12 @@ final class UXFileManager extends AbstractController
         foreach ($files as $file) {
             try {
                 $file->move($pathTo, $file->getClientOriginalName());
+                $to = $pathTo . '/' . $file->getClientOriginalName();
 
                 // optimize image with imagick
-                shell_exec('convert ' . $pathTo . '/' . $file->getClientOriginalName() . ' -resize 1920x1080 ' . $pathTo . '/' . $file->getClientOriginalName());
+                shell_exec('convert ' . $to . ' -resize 1920x1080 ' . $to);
 
-                $this->fileManagerExtensionRuntime->managePath($pathTo . '/' . $file->getClientOriginalName());
+                $this->fileManagerExtensionRuntime->managePath($to);
             } catch (\Exception $e) {
                 dd($e->getMessage(), $pathTo);
             }
@@ -369,6 +378,7 @@ final class UXFileManager extends AbstractController
             'path' => $fullPath,
             'id' => $id,
             'inputId' => $this->inputId,
+            'name' => basename($fullPath),
             'preview' => $this->generateUrl('ux.file_manager.render', ['path' => '/'.$path, 'configurationKey' => $this->path]),
             'mimeType' => mime_content_type($fullPath)
         ]);

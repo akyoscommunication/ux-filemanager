@@ -779,6 +779,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   width: 100%;
 }
 
+.ux-filemanager .min-w-6 {
+  min-width: 1.5rem;
+}
+
 .ux-filemanager .max-w-md {
   max-width: 28rem;
 }
@@ -978,6 +982,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .ux-filemanager .border-blue-400 {
   --tw-border-opacity: 1;
   border-color: rgb(96 165 250 / var(--tw-border-opacity, 1));
+}
+
+.ux-filemanager .border-blue-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(37 99 235 / var(--tw-border-opacity, 1));
 }
 
 .ux-filemanager .border-gray-200 {
@@ -1245,6 +1254,15 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.ux-filemanager .brightness-50 {
+  --tw-brightness: brightness(.5);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.ux-filemanager .filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .ux-filemanager .transition {

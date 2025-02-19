@@ -13,7 +13,6 @@ class FileManagerExtension extends AbstractExtension
             new TwigFilter('ux_filemanager_render', [FileManagerExtensionRuntime::class, 'render']),
             new TwigFilter('ux_filemanager_file', [FileManagerExtensionRuntime::class, 'getFrontendFile']),
             new TwigFilter('dirname', 'dirname'),
-            new TwigFilter('strpos', 'strpos'),
             // filter that convert bytes to human readable format
             new TwigFilter('bytes_to_human', [FileManagerExtensionRuntime::class, 'bytesToHuman']),
             new TwigFilter('mime_icon', [FileManagerExtensionRuntime::class, 'getMimeIcon']),

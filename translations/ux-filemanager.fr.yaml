@@ -1,6 +1,7 @@
 back: "Retour"
 save: "Enregistrer"
 open_filemanager: "Ouvrir le gestionnaire de fichiers"
+root: "Racine"
 
 other_spaces:
     label: "Autres espaces"

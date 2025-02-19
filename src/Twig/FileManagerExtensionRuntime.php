@@ -13,7 +13,7 @@ use Akyos\UXFileManager\Entity\File;
 class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private array $config = [],
+        private array $config,
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
         private FileRepository $fileRepository
@@ -120,7 +120,10 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 
         if (!$file) {
             $file = new File();
-            $file->setPath($path);
+            $file
+                ->setPath($path)
+                ->setMime(Mimes::from(mime_content_type($path)))
+            ;
         }
 
         if ($save) {

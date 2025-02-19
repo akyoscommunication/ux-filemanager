@@ -13,6 +13,7 @@ class FileManagerType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['path'] = $options['path'];
+        $view->vars['button_clear'] = $options['button_clear'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -20,6 +21,7 @@ class FileManagerType extends AbstractType
         $resolver
             ->setDefaults([
                 'path' => null,
+                'button_clear' => true,
             ])
             ->setRequired('path')
         ;

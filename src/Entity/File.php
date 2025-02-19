@@ -2,6 +2,7 @@
 
 namespace Akyos\UXFileManager\Entity;
 
+use Akyos\UXFileManager\Enum\Mimes;
 use App\Repository\FileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,6 +19,9 @@ class File
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $alt = null;
+
+    #[ORM\Column(enumType: Mimes::class)]
+    private ?Mimes $mime = null;
 
     public function getId(): ?int
     {
@@ -44,6 +48,18 @@ class File
     public function setAlt(?string $alt): static
     {
         $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getMime(): ?Mimes
+    {
+        return $this->mime;
+    }
+
+    public function setMime(Mimes $mime): static
+    {
+        $this->mime = $mime;
 
         return $this;
     }

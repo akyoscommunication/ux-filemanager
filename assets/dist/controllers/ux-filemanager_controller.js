@@ -7,7 +7,7 @@ import { Controller } from '@hotwired/stimulus';
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
 	static values = {data: String, dataMimeType: String}
-	static targets = ['modal', 'input', 'preview', 'previewImage', 'previewEmbed']
+	static targets = ['modal', 'input', 'preview', 'previewImage', 'previewEmbed', 'name']
 	
 	connect() {
 		window.addEventListener('filemanager:choose', this.choose.bind(this));
@@ -32,6 +32,7 @@ export default class extends Controller {
 		const preview = e.detail.preview;
 		if (preview) {
 			this.setPreview(preview, e.detail.mimeType);
+			this.nameTarget.innerText = e.detail.name;
 		}
 	}
 	
@@ -110,5 +111,6 @@ export default class extends Controller {
 		this.inputTarget.value = '';
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.setPreview("");
+		this.nameTarget.innerText = '';
 	}
 }

@@ -3,31 +3,39 @@
 {%- block ux_filemanager_widget -%}
     {% set mimeType = "" %}
     {% set renderUrl = "" %}
+    {% set ux_file = "" %}
     {% if value %}
         {% set ux_file = value|ux_filemanager_file %}
-        {% set renderUrl = ux_file.path|ux_filemanager_render %}
-        {% set mimeType = ux_file.mime %}
+        {% if ux_file %}
+            {% set renderUrl = ux_file.path|ux_filemanager_render %}
+            {% set mimeType = ux_file.mime %}
+        {% endif %}
     {% endif %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager w-48">
         <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
 
-        <div class="relative w-48">
+        <div class="relative">
             <div class="aspect-square rounded-lg border overflow-hidden">
                 <img src="" alt="Preview" class="object-cover w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewImage') }}>
                 <embed src="" class="object-cover h-full w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewEmbed') }}>
             </div>
             <div class="flex gap-2 absolute top-1 right-1">
-                <button type="button" class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
-                    {{ stimulus_action('ux-filemanager', 'reset') }}>
-                    <twig:ux:icon name="iconamoon:trash" class="w-4"/>
-                </button>
+                {% if button_clear is defined and button_clear %}
+                    <button type="button" class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                        {{ stimulus_action('ux-filemanager', 'reset') }}>
+                        <twig:ux:icon name="iconamoon:trash" class="w-4"/>
+                    </button>
+                {% endif %}
                 <button type="button" class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
                     {{ stimulus_action('ux-filemanager', 'open') }}>
                     <twig:ux:icon name="emojione-v1:open-folder" class="w-4"/>
                 </button>
             </div>
         </div>
+        {% if ux_file %}
+            <p class="truncate"><small {{ stimulus_target('ux-filemanager', 'name') }}>{{ ux_file.name }}</small></p>
+        {% endif %}
 
         <dialog {{ stimulus_target('ux-filemanager', 'modal') }} class="backdrop:bg-gray-900 backdrop:bg-opacity-50 dark:backdrop:bg-gray-800 dark:backdrop:bg-opacity-50 w-[80%] h-[80%] z-10 rounded-xl ux-filemanager--modal overflow-y-hidden resize" resize="true" resizable>
             {% if app.request.server.get('HTTP_SEC_CH_UA_PLATFORM') is same as('"macOS"') %}
