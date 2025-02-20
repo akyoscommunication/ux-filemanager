@@ -63,3 +63,41 @@
     </div>
 
 {%- endblock ux_filemanager_widget -%}
+
+{%- block ux_filemanager_upload_widget -%}
+    {% set mimeType = "" %}
+    {% set renderUrl = "" %}
+    {% set ux_file = "" %}
+    {% if value and value.file_db %}
+        {% set ux_file = value.file_db|ux_filemanager_file %}
+        {% if ux_file %}
+            {% set renderUrl = ux_file.path|ux_filemanager_render %}
+            {% set mimeType = ux_file.mime %}
+        {% endif %}
+    {% endif %}
+
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager w-48">
+        {% for children in form %}
+            {{ form_row(children) }}
+        {% endfor %}
+
+        <div class="relative">
+            <div class="aspect-square rounded-lg border overflow-hidden">
+                <img src="" alt="Preview" class="object-cover w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewImage') }}>
+                <embed src="" class="object-cover h-full w-full h-full hidden" {{ stimulus_target('ux-filemanager', 'preview previewEmbed') }}>
+            </div>
+            <div class="flex gap-2 absolute top-1 right-1">
+                {% if button_clear is defined and button_clear %}
+                    <button type="button" class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+                        {{ stimulus_action('ux-filemanager', 'reset') }}>
+                        <twig:ux:icon name="iconamoon:trash" class="w-4"/>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% if ux_file %}
+            <p class="truncate"><small {{ stimulus_target('ux-filemanager', 'name') }}>{{ ux_file.name }}</small></p>
+        {% endif %}
+    </div>
+
+{%- endblock ux_filemanager_upload_widget -%}
