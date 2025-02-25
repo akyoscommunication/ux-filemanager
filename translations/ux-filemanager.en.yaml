@@ -13,7 +13,7 @@ explore:
 
 storage:
     label: "Storage"
-    remain: "%percent%% remaining out of %total% used"
+    used: "%percent%% used out of %total%"
 
 global:
     search: "Search..."
