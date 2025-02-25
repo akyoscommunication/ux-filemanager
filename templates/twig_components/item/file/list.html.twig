@@ -1,0 +1,29 @@
+{% import '@UXFileManager/macros.html.twig' as macros %}
+
+<div class="grid grid-cols-12 px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+     data-path="{{ path }}"
+     draggable="true"
+     ondragstart="event.dataTransfer.setData('path', '{{ path }}');"
+     tabindex="0"
+>
+    <div class="col-span-5 flex items-center space-x-3">
+        {{ macros.input_checkbox(path) }}
+
+        <twig:ux:icon name="{{ item|mime_icon }}" class="w-6 min-w-6" />
+        <a class="text-gray-700 dark:text-gray-300 truncate" {{ live_action('choose', {'path': path}) }}>
+            {{ item.filename }}
+        </a>
+    </div>
+    <div class="col-span-2 text-gray-500 dark:text-gray-400 text-sm self-center">{{ item.size|bytes_to_human }}</div>
+    <div class="col-span-4 text-gray-500 dark:text-gray-400 text-sm self-center truncate">{{ item.mTime|date }}</div>
+    <div class="col-span-1 text-gray-500 dark:text-gray-400 text-sm flex items-end justify-center gap-2">
+        <button type="button" class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
+            {{ live_action('edit', {path : path}) }}>
+            <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
+        </button>
+        <button type="button" class="flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+            {{ live_action('delete', {path : path}) }}>
+            <twig:ux:icon name="iconamoon:trash" class="w-4"/>
+        </button>
+    </div>
+</div>

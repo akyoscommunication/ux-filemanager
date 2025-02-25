@@ -30,16 +30,14 @@ export default class extends Controller {
     }
     
     startTimer(path) {
-        console.log('start timer');
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {
-            this.liveComponent.action('changePath', {path});
+            this.liveComponent.action('changeDir', {path});
         }, 2000)
     }
     
     dragover(e, dropzone) {
         e.preventDefault();
-        console.log('dragover');
         let path = dropzone.getAttribute('data-path');
         const animation = dropzone.getAttribute('data-animation');
         
@@ -50,7 +48,8 @@ export default class extends Controller {
         if (path) {
             if (this.currentPath !== path) {
                 this.currentPath = path;
-                this.startTimer(path);
+                // @TODO: fix this
+                // this.startTimer(path);
             }
         }
     }
@@ -84,8 +83,7 @@ export default class extends Controller {
         
         const file_to_move = e.dataTransfer.getData('path');
         
-        
-        if (file_to_move && path) {
+        if (file_to_move && typeof path === 'string') {
             this.liveComponent.action('move', {from: file_to_move, to: path});
         } else {
             this.upload(e.dataTransfer.files, path);

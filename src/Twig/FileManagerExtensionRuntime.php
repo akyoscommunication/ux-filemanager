@@ -124,8 +124,7 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 
     public function relativePath(string $path, string $key): string
     {
-        $path = str_replace($this->getConfig()['paths'][$key]['path'], '', $path);
-        return ltrim($path, '/');
+        return str_replace($this->getConfig()['paths'][$key]['path'], '', $path);
     }
 
     // TODO: mettre toutes les methodes suivantes dans un service dédié

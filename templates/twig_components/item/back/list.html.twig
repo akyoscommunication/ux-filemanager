@@ -1,0 +1,11 @@
+<a class="grid grid-cols-12 px-6 py-3 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+    {{ live_action('changeDir', {'dir' : path }) }}
+    {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+   data-animation="true"
+   data-path="{{ path }}"
+   tabindex="0"
+>
+    <div class="col-span-6 flex items-center space-x-3">
+        <span class="text-gray-700 dark:text-gray-300">...</span>
+    </div>
+</a>

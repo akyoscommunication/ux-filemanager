@@ -50,7 +50,7 @@ export default class extends Controller {
 			target.style.display = 'none';
 		});
 		
-		if (typeof name === 'string') {
+		if (typeof name === 'string' && this.hasNameTarget) {
 			this.nameTarget.innerText = name || '';
 		}
 		

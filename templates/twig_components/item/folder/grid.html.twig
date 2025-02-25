@@ -1,0 +1,30 @@
+{% import '@UXFileManager/macros.html.twig' as macros %}
+
+<div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group"
+    {{ stimulus_target('ux-filemanager-dropzone', 'dropzone') }}
+     data-animation="true"
+     data-path="{{ path }}"
+     draggable="true"
+     ondragstart="event.dataTransfer.setData('path', '{{ path }}');"
+     tabindex="0"
+>
+    <!-- Checkbox + Bouton de suppression -->
+    <div class="flex items-center justify-between mb-2">
+        {{ macros.input_checkbox(path) }}
+
+        <button type="button" class="opacity-0 group-hover:opacity-100 flex items-center gap-2 bg-red-500 dark:bg-red-700 text-white p-2 rounded-lg hover:bg-red-600 dark:hover:bg-red-800 transition duration-200"
+            {{ live_action('prevent|delete', {path : path}) }}>
+            <twig:ux:icon name="iconamoon:trash" class="w-4 h-4" />
+        </button>
+    </div>
+
+    <!-- Icône + Nom + Infos -->
+    <a class="flex flex-col items-center space-y-3 pt-4" {{ live_action('changeDir', {dir : path }) }}>
+        <twig:ux:icon name="flat-color-icons:folder" class="w-16" />
+        <span class="text-gray-700 dark:text-gray-300 font-medium text-center">{{ item.filename }}</span>
+        <div class="text-gray-500 dark:text-gray-400 text-sm text-center">
+            <div>{{ item.size|bytes_to_human }}</div>
+            <div>{{ item.mTime|date }}</div>
+        </div>
+    </a>
+</div>

@@ -2,6 +2,7 @@
 
 namespace Akyos\UXFileManager\Twig\Components;
 
+use Akyos\UXFileManager\Enum\Views;
 use Akyos\UXFileManager\Repository\FileRepository;
 use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
 use Akyos\UXFileManager\Twig\FileManagerExtensionRuntime;
@@ -21,13 +22,15 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
+/**
+ * @rules :
+ *  - folder must not end with / and must begin with /
+ *  - path of folder must begin with /
+ */
 #[AsLiveComponent('UX:FileManager', template: '@UXFileManager/twig_components/UXFileManager.html.twig')]
 final class UXFileManager extends AbstractController
 {
     use DefaultActionTrait, ComponentToolsTrait;
-
-    const VIEW_LIST = 'list';
-    const VIEW_GRID = 'grid';
 
     #[LiveProp(writable: true)]
     public string $path;
@@ -54,13 +57,13 @@ final class UXFileManager extends AbstractController
     public string $bulkAction = "delete";
 
     #[LiveProp(writable: true)]
-    public string $view = self::VIEW_LIST;
+    public Views $view = Views::LIST;
 
     #[LiveProp]
     public ?string $inputId = null;
 
     #[LiveProp(writable: true)]
-    public string $orderBy = self::ORDER_BY_NAME;
+    public ?string $orderBy = null;
 
     #[LiveProp(writable: true)]
     public string $orderByDirection = self::ORDER_BY_ASC;
@@ -82,7 +85,7 @@ final class UXFileManager extends AbstractController
         private readonly TranslatorInterface $translator
     ) {}
 
-    public function getOriginalPath(): string
+    private function getOriginalPath(): string
     {
         return $this->fileManagerExtensionRuntime->getConfig()['paths'][$this->path]['path'];
     }
@@ -111,10 +114,15 @@ final class UXFileManager extends AbstractController
         return $otherSpaces;
     }
 
-    #[ExposeInTemplate('realPath')]
-    public function realPath(): string
+    private function realPath(): string
     {
         return $this->getOriginalPath() . $this->dir;
+    }
+
+    #[ExposeInTemplate('is_granted')]
+    public function isGrantedToView(): bool
+    {
+        return $this->isGranted(FileManagerVoter::VIEW, $this->realPath());
     }
 
     #[PreReRender]
@@ -135,48 +143,59 @@ final class UXFileManager extends AbstractController
         return substr($backFolder, 0, strrpos($backFolder, '/'));
     }
 
-    #[ExposeInTemplate('subFolders')]
-    public function getSubFolders(): array
+    #[ExposeInTemplate('items')]
+    public function getItems(): array
     {
         $finder = new Finder();
 
-        $subFolders = [];
-        $finderFolders = $finder->directories()->in($this->realPath())->depth(0);
+        $items = [];
+        $finderItems = $finder->in($this->realPath())->depth(0);
 
-        $this->sortFinder($finderFolders);
+        switch ($this->orderBy) {
+            case self::ORDER_BY_NAME:
+                $finder->sortByName();
+                break;
+            case self::ORDER_BY_SIZE:
+                $finder->sortBySize();
+                break;
+            case self::ORDER_BY_MTIME:
+                $finder->sortByModifiedTime();
+                break;
+            default:
+                // put directories first
+                $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b) {
+                    if ($a->isDir() && !$b->isDir()) {
+                        return -1;
+                    }
 
-        if ($this->q) {
-            $finderFolders->name('/' . $this->q . '/');
+                    if (!$a->isDir() && $b->isDir()) {
+                        return 1;
+                    }
+
+                    return $a->getFilename() <=> $b->getFilename();
+                });
         }
 
-        foreach ($finderFolders as $directory) {
-            if ($this->isGranted(FileManagerVoter::VIEW, $directory->getPathname())) {
-                $subFolders[] = $directory;
+        if ($this->orderByDirection === self::ORDER_BY_DESC) {
+            $finder->reverseSorting();
+        }
+
+        if ($this->q) {
+            $finderItems->name('/' . $this->q . '/');
+        }
+
+        foreach ($finderItems as $item) {
+            if ($this->isGranted(FileManagerVoter::VIEW, $item->getPathname())) {
+                $items[] = $item;
             }
         }
 
-        return $subFolders;
-    }
-
-    #[ExposeInTemplate('files')]
-    public function getFiles(): array
-    {
-        $finder = new Finder();
-
-        $files = [];
-        $finderFiles = $finder->files()->in($this->realPath())->depth(0);
-
-        $this->sortFinder($finderFiles);
-
-        if ($this->q) {
-            $finderFiles->name('/' . $this->q . '/');
+        if ($back = $this->getBackFolder()) {
+            // set to first element
+            array_unshift($items, $back);
         }
 
-        foreach ($finderFiles as $file) {
-            $files[] = $file;
-        }
-
-        return $files;
+        return $items;
     }
 
     #[ExposeInTemplate('editFile')]
@@ -186,7 +205,7 @@ final class UXFileManager extends AbstractController
             return null;
         }
 
-        $file = $this->fileManagerExtensionRuntime->getFile($this->currentEditingPath);
+        $file = $this->fileManagerExtensionRuntime->getFile($this->getOriginalPath() . $this->currentEditingPath);
 
         $this->currentEditingAlt = $file->getAlt() ?? '';
 
@@ -277,7 +296,14 @@ final class UXFileManager extends AbstractController
     public function move(#[LiveArg] string $from, #[LiveArg] string $to): void
     {
         $fileSystem = new Filesystem();
+        $from = $this->getOriginalPath() . $from;
+        $to = $this->getOriginalPath() . $to;
         $isDirFrom = is_dir($from);
+
+        // check if $to is not in $from
+        if (strpos($to, $from) === 0) {
+            return;
+        }
 
         // $to is dir, $from is file
         if (is_dir($to)) {
@@ -325,6 +351,7 @@ final class UXFileManager extends AbstractController
     public function delete(#[LiveArg] string $path): void
     {
         $fileSystem = new Filesystem();
+        $path = $this->getOriginalPath() . $path;
 
         if ($fileSystem->exists($path)) {
             $fileSystem->remove($path);
@@ -340,7 +367,7 @@ final class UXFileManager extends AbstractController
     }
 
     #[LiveAction]
-    public function changeView(#[LiveArg] string $view): void
+    public function changeView(#[LiveArg] Views $view): void
     {
         $this->view = $view;
     }
@@ -348,7 +375,7 @@ final class UXFileManager extends AbstractController
     #[LiveAction]
     public function saveEdit(): void
     {
-        $this->fileManagerExtensionRuntime->setAlt($this->currentEditingPath, $this->currentEditingAlt);
+        $this->fileManagerExtensionRuntime->setAlt($this->getOriginalPath() . $this->currentEditingPath, $this->currentEditingAlt);
     }
 
     #[LiveAction]
@@ -454,24 +481,5 @@ final class UXFileManager extends AbstractController
         }
 
         return $files;
-    }
-
-    private function sortFinder(Finder $finder): void
-    {
-        switch ($this->orderBy) {
-            case self::ORDER_BY_NAME:
-                $finder->sortByName();
-                break;
-            case self::ORDER_BY_SIZE:
-                $finder->sortBySize();
-                break;
-            case self::ORDER_BY_MTIME:
-                $finder->sortByModifiedTime();
-                break;
-        }
-
-        if ($this->orderByDirection === self::ORDER_BY_DESC) {
-            $finder->reverseSorting();
-        }
     }
 }
