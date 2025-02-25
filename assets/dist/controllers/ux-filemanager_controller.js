@@ -7,13 +7,23 @@ import { Controller } from '@hotwired/stimulus';
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
 	static values = {data: String, dataMimeType: String}
-	static targets = ['modal', 'input', 'preview', 'previewImage', 'previewEmbed', 'name']
+	static targets = ['modal', 'input', 'inputDelete', 'preview', 'previewImage', 'previewEmbed', 'name']
 	
 	connect() {
 		window.addEventListener('filemanager:choose', this.choose.bind(this));
 		
+		// if this.inputTarget is file input, listen to change event
+		if (this.inputTarget.tagName === 'INPUT' && this.inputTarget.type === 'file') {
+			this.inputTarget.addEventListener('change', this.upload.bind(this));
+		}
+		
 		if (this.dataValue) {
-			this.setPreview(this.dataValue, this.dataMimeTypeValue);
+			// we preserve the original name if we have value
+			this.setPreview(this.dataValue, this.dataMimeTypeValue, false);
+		}
+		
+		if (this.hasInputDeleteTarget) {
+			this.handleDeleteInput(this.dataValue !== '');
 		}
 	}
 	
@@ -31,15 +41,18 @@ export default class extends Controller {
 		
 		const preview = e.detail.preview;
 		if (preview) {
-			this.setPreview(preview, e.detail.mimeType);
-			this.nameTarget.innerText = e.detail.name;
+			this.setPreview(preview, e.detail.mimeType, e.detail.name);
 		}
 	}
 	
-	setPreview(url, mimeType) {
+	setPreview(url, mimeType, name = '') {
 		this.previewTargets.forEach(target => {
 			target.style.display = 'none';
 		});
+		
+		if (typeof name === 'string') {
+			this.nameTarget.innerText = name || '';
+		}
 		
 		if (!url) {
 			return;
@@ -111,6 +124,37 @@ export default class extends Controller {
 		this.inputTarget.value = '';
 		this.inputTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
 		this.setPreview("");
-		this.nameTarget.innerText = '';
+		this.handleDeleteInput(false);
+	}
+	
+	upload(e) {
+		e.preventDefault();
+		const file = this.inputTarget.files[0];
+		if (!file) {
+			return;
+		}
+		
+		// set preview
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			this.setPreview(e.target.result, file.type, file.name);
+		};
+		reader.readAsDataURL(file);
+		
+		this.handleDeleteInput();
+	}
+	
+	handleDeleteInput(hasValue = true) {
+		if (this.hasInputDeleteTarget) {
+			this.inputDeleteTarget.value = hasValue ? '0' : '1';
+			this.inputDeleteTarget.checked = !hasValue;
+			this.inputDeleteTarget.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+		}
+		
+		if (hasValue) {
+			this.inputTarget.style.pointerEvents = 'none';
+		} else {
+			this.inputTarget.style.pointerEvents = 'auto';
+		}
 	}
 }

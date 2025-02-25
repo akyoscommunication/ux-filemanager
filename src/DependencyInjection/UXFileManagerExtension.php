@@ -22,14 +22,6 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
             $container->prependExtensionConfig('twig', ['form_themes' => ['@UXFileManager/form.html.twig']]);
         }
 
-        if (isset($bundles['TwigComponentBundle'])) {
-            $container->prependExtensionConfig('twig_component', [
-                'defaults' => [
-                    'Akyos\\UXFileManager\\Twig\\Components\\' => __DIR__.'/../../templates/components',
-                ]
-            ]);
-        }
-
         if (isset($bundles['DoctrineBundle'])) {
             $container->prependExtensionConfig('doctrine', [
                 'orm' => [

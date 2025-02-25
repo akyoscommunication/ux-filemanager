@@ -1,0 +1,8 @@
+<div {{ attributes }}>
+    {% set src = file.path|ux_filemanager_render %}
+    {% if is_embeded %}
+        <embed src="{{ src }}" title="{{ file.alt }}" class="object-cover h-full w-full h-full">
+    {% else %}
+        <img src="{{ src }}" alt="{{ file.alt }}" class="object-cover h-full w-full h-full">
+    {% endif %}
+</div>

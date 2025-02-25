@@ -44,3 +44,7 @@ edit_file:
     alt:
         label: "Alternative text"
         placeholder: "Alternative text"
+
+upload_overlay:
+    title: "Upload a file"
+    drop: "Drop a file here"

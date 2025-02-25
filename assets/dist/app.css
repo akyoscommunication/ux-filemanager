@@ -570,8 +570,16 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   inset: 0px;
 }
 
+.ux-filemanager .bottom-2 {
+  bottom: 0.5rem;
+}
+
 .ux-filemanager .left-0 {
   left: 0px;
+}
+
+.ux-filemanager .left-2 {
+  left: 0.5rem;
 }
 
 .ux-filemanager .left-3 {
@@ -582,6 +590,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   right: 0.25rem;
 }
 
+.ux-filemanager .right-2 {
+  right: 0.5rem;
+}
+
 .ux-filemanager .top-0 {
   top: 0px;
 }
@@ -590,8 +602,16 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   top: 0.25rem;
 }
 
+.ux-filemanager .top-2 {
+  top: 0.5rem;
+}
+
 .ux-filemanager .top-2\.5 {
   top: 0.625rem;
+}
+
+.ux-filemanager .z-0 {
+  z-index: 0;
 }
 
 .ux-filemanager .z-10 {
@@ -930,6 +950,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   white-space: nowrap;
 }
 
+.ux-filemanager .whitespace-break-spaces {
+  white-space: break-spaces;
+}
+
 .ux-filemanager .rounded {
   border-radius: 0.25rem;
 }
@@ -972,6 +996,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-filemanager .border-r {
   border-right-width: 1px;
+}
+
+.ux-filemanager .border-dashed {
+  border-style: dashed;
 }
 
 .ux-filemanager .border-blue-100 {
@@ -1038,6 +1066,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
+.ux-filemanager .bg-gray-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+}
+
 .ux-filemanager .bg-green-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
@@ -1078,9 +1111,17 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(202 138 4 / var(--tw-bg-opacity, 1));
 }
 
+.ux-filemanager .bg-opacity-50 {
+  --tw-bg-opacity: 0.5;
+}
+
 .ux-filemanager .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.ux-filemanager .p-10 {
+  padding: 2.5rem;
 }
 
 .ux-filemanager .p-2 {
@@ -1137,6 +1178,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .ux-filemanager .pb-12 {
   padding-bottom: 3rem;
+}
+
+.ux-filemanager .pb-6 {
+  padding-bottom: 1.5rem;
 }
 
 .ux-filemanager .pl-10 {
@@ -1494,6 +1539,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     background-color: rgb(185 28 28 / var(--tw-bg-opacity, 1));
   }
 
+  .ux-filemanager .dark\:bg-opacity-50 {
+    --tw-bg-opacity: 0.5;
+  }
+
   .ux-filemanager .dark\:text-blue-400 {
     --tw-text-opacity: 1;
     color: rgb(96 165 250 / var(--tw-text-opacity, 1));
@@ -1522,6 +1571,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   .ux-filemanager .dark\:text-gray-500 {
     --tw-text-opacity: 1;
     color: rgb(107 114 128 / var(--tw-text-opacity, 1));
+  }
+
+  .ux-filemanager .dark\:text-gray-800 {
+    --tw-text-opacity: 1;
+    color: rgb(31 41 55 / var(--tw-text-opacity, 1));
   }
 
   .ux-filemanager .dark\:text-red-200 {

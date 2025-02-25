@@ -44,3 +44,7 @@ edit_file:
     alt:
         label: "Texte alternatif"
         placeholder: "Texte alternatif"
+
+upload_overlay:
+    title: "Télécharger un fichier"
+    drop: "Déposez un fichier ici"
