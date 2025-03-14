@@ -7,7 +7,7 @@ import { getComponent } from '@symfony/ux-live-component';
 */
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    static targets = ['dropzone', 'input', 'file']
+    static targets = ['dropzoneContainer', 'dropzone', 'input', 'file']
     
     async initialize() {
         this.liveComponent = await getComponent(this.element);
@@ -19,7 +19,7 @@ export default class extends Controller {
             dropzone.addEventListener('dragleave', (e) => this.dragleave(e, dropzone));
         });
         
-        this.dropzoneTarget.addEventListener('drop', this.drop.bind(this));
+        this.dropzoneContainerTarget.addEventListener('drop', this.drop.bind(this));
         
         window.addEventListener('file:move', (e) => {
             e.dataTransfer.setData('path', e.detail.path);

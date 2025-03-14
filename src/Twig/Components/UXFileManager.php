@@ -25,7 +25,7 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 /**
  * @rules :
  *  - folder must not end with / and must begin with /
- *  - path of folder must begin with /
+ *  - path of file must begin with /
  */
 #[AsLiveComponent('UX:FileManager', template: '@UXFileManager/twig_components/UXFileManager.html.twig')]
 final class UXFileManager extends AbstractController
@@ -190,9 +190,9 @@ final class UXFileManager extends AbstractController
             }
         }
 
-        if ($back = $this->getBackFolder()) {
+        if ($this->getBackFolder() !== null) {
             // set to first element
-            array_unshift($items, $back);
+            array_unshift($items, $this->getBackFolder());
         }
 
         return $items;
@@ -330,7 +330,7 @@ final class UXFileManager extends AbstractController
     public function upload(Request $request, #[LiveArg] ?string $path = null): void
     {
         $files = $request->files->all('upload');
-        $pathTo = $path ?? $this->realPath();
+        $pathTo = $this->realPath() . $path;
 
         foreach ($files as $file) {
             try {

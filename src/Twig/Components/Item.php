@@ -26,7 +26,7 @@ final class Item
             return;
         }
 
-        $dir = $component->dir ?? '/';
+        $dir = $component->dir;
 
         $type = 'file';
         if (is_string($component->item)) {
