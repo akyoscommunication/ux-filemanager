@@ -1357,6 +1357,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   }
 }
 
+.ux-filemanager .ux-filemanager {
+  width: 12rem;
+}
+
 .ux-filemanager .backdrop\:bg-gray-900::backdrop {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));

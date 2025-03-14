@@ -136,8 +136,11 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
             $file = new File();
             $file
                 ->setPath($path)
-                ->setMime(Mimes::from(mime_content_type($path)))
             ;
+
+            if (file_exists($path)) {
+                $file->setMime(Mimes::from(mime_content_type($path)));
+            }
         }
 
         if ($save) {

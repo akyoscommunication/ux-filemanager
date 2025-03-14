@@ -28,3 +28,7 @@
         @apply hidden;
     }
 }
+
+.ux-filemanager {
+    @apply w-48;
+}
