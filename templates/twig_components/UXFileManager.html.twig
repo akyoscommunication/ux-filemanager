@@ -112,6 +112,7 @@
                 <h2 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-4 flex gap-2"><twig:ux:icon name="svg-spinners:clock" class="w-4"/> {{ 'global.recents'|trans }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     {% for file in recently_used %}
+                        {% set relative_path = (file.path ~ '/')|relative_path(path) %}
                         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group relative h-36">
                             {% if enum('Akyos\\UXFileManager\\Enum\\Mimes').isEmbed(file.mime) %}
                                 <embed src="{{ file.path|ux_filemanager_render }}" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl">
@@ -121,13 +122,13 @@
                             <div class="flex item s-center justify-between mb-2 relative z-10">
                                 <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
                                     <button type="button" class="flex items-center gap-2 bg-blue-500 dark:bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-800 transition duration-200"
-                                        {{ live_action('edit', {path : file.path|relative_path(path)}) }}>
+                                        {{ live_action('edit', {path : relative_path}) }}>
                                         <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
                                     </button>
                                 </div>
                             </div>
 
-                            <a class="flex flex-col items-center space-y-3 pt-4 absolute inset-0" {{ live_action('choose', {'path': file.path|relative_path(path)}) }}></a>
+                            <a class="flex flex-col items-center space-y-3 pt-4 absolute inset-0" {{ live_action('choose', {'path': relative_path}) }}></a>
                         </div>
                     {% endfor %}
                 </div>

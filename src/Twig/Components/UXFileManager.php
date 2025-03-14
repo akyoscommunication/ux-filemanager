@@ -2,6 +2,7 @@
 
 namespace Akyos\UXFileManager\Twig\Components;
 
+use Akyos\UXFileManager\Entity\File;
 use Akyos\UXFileManager\Enum\Views;
 use Akyos\UXFileManager\Repository\FileRepository;
 use Akyos\UXFileManager\Security\Voter\FileManagerVoter;
@@ -94,7 +95,8 @@ final class UXFileManager extends AbstractController
     public function getRecentlyUsed(): array
     {
         return array_filter(
-            array_map(fn($id) => $this->fileRepository->find($id), $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, []))
+            array_map(fn($id) => $this->fileRepository->find($id), $this->requestStack->getSession()->get(self::RECENTLY_USED_TOKEN, [])),
+            fn(?File $file) => $file && $this->isGranted(FileManagerVoter::VIEW, $file->getPath()) && file_exists($file->getPath()),
         );
     }
 
@@ -390,7 +392,7 @@ final class UXFileManager extends AbstractController
 
         // remove / at the end of the path if exists
         $pathOfDir = rtrim($config['path'], '/');
-        $fullPath = $pathOfDir . '/' . $path;
+        $fullPath = $pathOfDir . $path;
         $file = $this->fileManagerExtensionRuntime->getFile($fullPath, true);
         $id = $file->getId();
 
