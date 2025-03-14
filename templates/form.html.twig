@@ -12,7 +12,7 @@
         {% endif %}
     {% endif %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager w-48">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager ux-filemanager--input">
         <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
 
         <div class="relative">
