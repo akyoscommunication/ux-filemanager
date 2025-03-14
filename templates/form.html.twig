@@ -12,7 +12,7 @@
         {% endif %}
     {% endif %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager ux-filemanager--input">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager" style="width: 12rem;">
         <input type="hidden" {{ block('widget_attributes') }} {{ stimulus_target('ux-filemanager', 'input') }}>
 
         <div class="relative">
@@ -78,7 +78,7 @@
 
     {% set file_input = form|first %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager ux-filemanager--input">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager" style="width: 12rem;">
         <label for="{{ file_input.vars.id }}" class="relative">
             {{ form_widget(form.file, {
                 attr: {

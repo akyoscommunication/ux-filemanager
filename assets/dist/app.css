@@ -762,10 +762,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   width: 1rem;
 }
 
-.ux-filemanager .w-48 {
-  width: 12rem;
-}
-
 .ux-filemanager .w-5 {
   width: 1.25rem;
 }
