@@ -78,7 +78,7 @@
 
     {% set file_input = form|first %}
 
-    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager w-48">
+    <div {{ stimulus_controller('ux-filemanager', {'data' : renderUrl, 'dataMimeType': mimeType}) }} class="ux-filemanager ux-filemanager--input">
         <label for="{{ file_input.vars.id }}" class="relative">
             {{ form_widget(form.file, {
                 attr: {

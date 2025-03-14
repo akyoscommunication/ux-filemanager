@@ -29,6 +29,6 @@
     }
 }
 
-.ux-filemanager {
+.ux-filemanager--input {
     @apply w-48;
 }

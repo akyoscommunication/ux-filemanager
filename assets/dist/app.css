@@ -1357,7 +1357,7 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   }
 }
 
-.ux-filemanager .ux-filemanager {
+.ux-filemanager .ux-filemanager--input {
   width: 12rem;
 }
 
