@@ -25,12 +25,18 @@
         "webpackMode": "eager",
         "fetch": "eager",
         "enabled": true
+      },
+      "ux-dialog": {
+        "package": "@stimulus-components/dialog",
+        "entrypoint": "dist/index.js",
+        "webpackMode": "eager",
+        "fetch": "eager",
+        "enabled": true
       }
     },
     "importmap": {
       "@hotwired/stimulus": "^3.0.0",
-      "@stimulus-components/dialog": "^1.0.1",
-      "@akyoscommunication/main": "path:%PACKAGE%/dist/main.js"
+      "@stimulus-components/dialog": "^1.0.1"
     }
   },
   "dependencies": {
