@@ -26,9 +26,9 @@
         "fetch": "eager",
         "enabled": true
       },
-      "ux-dialog": {
+      "ux-filemanager-dialog": {
         "main": "dist/controllers/ux-filemanager-dialog.js",
-        "name": "ux-filemanager-dropzone",
+        "name": "ux-filemanager-dialog",
         "webpackMode": "eager",
         "fetch": "eager",
         "enabled": true
