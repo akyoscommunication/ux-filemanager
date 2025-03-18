@@ -27,7 +27,7 @@
         "enabled": true
       },
       "ux-dialog": {
-        "package": "@stimulus-components/dialog",
+        "main": "@stimulus-components/dialog",
         "entrypoint": "dist/index.js",
         "webpackMode": "eager",
         "fetch": "eager",
