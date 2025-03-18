@@ -27,7 +27,7 @@
         "enabled": true
       },
       "ux-filemanager-dialog": {
-        "main": "dist/controllers/ux-filemanager-dialog.js",
+        "main": "dist/controllers/ux-filemanager-dialog_controller.js",
         "name": "ux-filemanager-dialog",
         "webpackMode": "eager",
         "fetch": "eager",
