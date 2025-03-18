@@ -100,7 +100,7 @@
             </div>
 
             <div class="flex space-x-2">
-                <button type="button" class="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" {{ stimulus_action('dialog', 'open') }}>
+                <button type="button" class="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" {{ stimulus_action('ux-filemanager-dialog', 'open') }}>
                     {{ 'global.new_folder'|trans }}
                 </button>
             </div>
@@ -219,14 +219,14 @@
         </div>
     {% endif %}
 
-    <dialog class="backdrop:bg-gray-900 backdrop:bg-opacity-50 rounded-xl p-6 shadow-lg w-full max-w-md bg-white dark:bg-gray-900 dark:backdrop:bg-gray-800 dark:backdrop:bg-opacity-50 space-y-4" {{ stimulus_target('dialog', 'dialog') }}>
+    <dialog class="backdrop:bg-gray-900 backdrop:bg-opacity-50 rounded-xl p-6 shadow-lg w-full max-w-md bg-white dark:bg-gray-900 dark:backdrop:bg-gray-800 dark:backdrop:bg-opacity-50 space-y-4" {{ stimulus_target('ux-filemanager-dialog', 'dialog') }}>
         <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ 'dialog.new_folder.title'|trans }}</h2>
         <input type="text" name="inputField" placeholder="{{ 'dialog.new_folder.input.placeholder'|trans }}"
                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                data-model="newFolder">
         <div class="flex justify-end space-x-2">
             <button type="button" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-                {{ stimulus_action('dialog', 'close') }} autofocus>{{ 'back'|trans }}</button>
+                {{ stimulus_action('ux-filemanager-dialog', 'close') }} autofocus>{{ 'back'|trans }}</button>
             <button type="button" class="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800"
                 {{ live_action('createFolder') }}>{{ 'save'|trans }}</button>
         </div>

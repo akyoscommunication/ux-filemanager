@@ -27,8 +27,8 @@
         "enabled": true
       },
       "ux-dialog": {
-        "main": "@stimulus-components/dialog",
-        "entrypoint": "dist/index.js",
+        "main": "dist/controllers/ux-filemanager-dialog.js",
+        "name": "ux-filemanager-dropzone",
         "webpackMode": "eager",
         "fetch": "eager",
         "enabled": true
