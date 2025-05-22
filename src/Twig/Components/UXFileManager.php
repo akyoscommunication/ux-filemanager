@@ -330,7 +330,7 @@ final class UXFileManager extends AbstractController
     public function upload(Request $request, #[LiveArg] ?string $path = null): void
     {
         $files = $request->files->all('upload');
-        $pathTo = $path ?? $this->realPath();
+        $pathTo = $path ? $this->getOriginalPath().$path : $this->realPath();
 
         foreach ($files as $file) {
             try {
@@ -390,7 +390,7 @@ final class UXFileManager extends AbstractController
 
         // remove / at the end of the path if exists
         $pathOfDir = rtrim($config['path'], '/');
-        $fullPath = $pathOfDir . '/' . $path;
+        $fullPath = $pathOfDir . $path;
         $file = $this->fileManagerExtensionRuntime->getFile($fullPath, true);
         $id = $file->getId();
 
