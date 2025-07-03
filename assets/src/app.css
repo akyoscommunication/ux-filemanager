@@ -32,3 +32,7 @@
 .ux-filemanager--input {
     @apply w-48;
 }
+
+:root {
+    @apply flex h-full bg-gray-50 dark:bg-gray-900;
+}

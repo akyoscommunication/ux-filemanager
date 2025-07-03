@@ -3,7 +3,7 @@
 {% set view_list = constant('Akyos\\UXFileManager\\Enum\\Views::LIST') %}
 {% set view_grid = constant('Akyos\\UXFileManager\\Enum\\Views::GRID') %}
 
-<div{{ attributes.defaults({class: 'ux-filemanager flex h-full bg-gray-50 dark:bg-gray-900'})
+<div{{ attributes.defaults({class: 'ux-filemanager'})
     .add(stimulus_controller('ux-filemanager-dialog'))
     .add(stimulus_action('ux-filemanager-dialog', 'backdropClose'))
 
