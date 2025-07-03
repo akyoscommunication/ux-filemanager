@@ -3,11 +3,10 @@
 namespace Akyos\UXFileManager\Twig\Components;
 
 use Akyos\UXFileManager\Enum\Views;
-use Akyos\UXFileManager\Twig\FileManagerExtensionRuntime;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\UX\LiveComponent\Attribute\PreReRender;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Event\PreRenderEvent;
 
 #[AsTwigComponent('UX:FileManager:item')]
@@ -18,6 +17,16 @@ final class Item
     public ?string $dir;
     public string $storage;
     public SplFileInfo|string $item;
+
+    public function __construct(
+        private readonly array $actions,
+    ) {}
+
+    #[ExposeInTemplate('actions')]
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
 
     public function onPreRender(PreRenderEvent $event): void
     {

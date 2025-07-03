@@ -13,6 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -83,7 +84,8 @@ final class UXFileManager extends AbstractController
         private readonly Security $security,
         private readonly RequestStack $requestStack,
         private readonly FileRepository $fileRepository,
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
+        private readonly ContainerInterface $containerInterface
     ) {}
 
     private function getOriginalPath(): string
@@ -372,6 +374,18 @@ final class UXFileManager extends AbstractController
     public function changeView(#[LiveArg] Views $view): void
     {
         $this->view = $view;
+    }
+
+    #[LiveAction]
+    public function action(#[LiveArg] string $class, #[LiveArg] string $method, #[LiveArg] string $path): void
+    {
+        if (is_file($this->getOriginalPath() . $path)) {
+            $thing = $this->fileManagerExtensionRuntime->getFile($this->getOriginalPath() . $path);
+        } else {
+            $thing = dir($this->getOriginalPath() . $path);
+        }
+
+        $this->containerInterface->get($class)->$method($thing);
     }
 
     #[LiveAction]

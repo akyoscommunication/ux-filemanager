@@ -2,15 +2,17 @@
 
 namespace Akyos\UXFileManager\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
+use Akyos\UXFileManager\Attributes\AsUXFileManagerAction;
+use Symfony\Component\DependencyInjection\ChildDefinition;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\AssetMapper\AssetMapperInterface;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 class UXFileManagerExtension extends Extension implements PrependExtensionInterface, ConfigurationInterface
 {
@@ -78,6 +80,19 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
         } catch (\Exception $e) {
             dd($e);
         }
+
+        $container->registerAttributeForAutoconfiguration(
+            AsUXFileManagerAction::class,
+            static function (ChildDefinition $definition, AsUXFileManagerAction $attribute, \ReflectionMethod $reflector) {
+                $definition->addTag('ux_file_manager.action', [
+                    ...$attribute->serviceConfig(),
+                    'method' => $reflector->getName(),
+                    'class' => $reflector->getDeclaringClass()->getName(),
+                ]);
+
+                $definition->setPublic(true);
+            }
+        );
     }
 
     public function getConfigTreeBuilder(): TreeBuilder

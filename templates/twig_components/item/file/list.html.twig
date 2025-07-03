@@ -25,5 +25,7 @@
             {{ live_action('delete', {path : path}) }}>
             <twig:ux:icon name="iconamoon:trash" class="w-4"/>
         </button>
+        
+        {% include '@UXFileManager/twig_components/item/actions.html.twig' with {actions: actions, path: path} %}
     </div>
 </div>

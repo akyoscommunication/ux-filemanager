@@ -22,6 +22,8 @@
             >
                 <twig:ux:icon name="fluent-color:edit-20" class="w-4"/>
             </button>
+
+            {% include '@UXFileManager/twig_components/item/actions.html.twig' with {actions: actions, path: path} %}
         </div>
     </div>
 
