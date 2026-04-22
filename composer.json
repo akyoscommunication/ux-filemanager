@@ -27,8 +27,8 @@
   },
   "require": {
     "php": ">=8.3",
-    "symfony/ux-icons": "^2.19",
-    "symfony/ux-live-component": "^2.19"
+    "symfony/ux-icons": "^2.19|^3.0",
+    "symfony/ux-live-component": "^2.19|^3.0"
   },
   "require-dev": {
     "psr/log": "^1|^2|^3",
