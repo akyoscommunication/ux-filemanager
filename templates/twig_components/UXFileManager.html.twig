@@ -3,13 +3,9 @@
 {% set view_list = constant('Akyos\\UXFileManager\\Enum\\Views::LIST') %}
 {% set view_grid = constant('Akyos\\UXFileManager\\Enum\\Views::GRID') %}
 
-<div{{ attributes.defaults({class: 'ux-filemanager'})
-    .add(stimulus_controller('ux-filemanager-dialog'))
-    .add(stimulus_action('ux-filemanager-dialog', 'backdropClose'))
-
-    .add(stimulus_controller('ux-filemanager-dropzone'))
-    .add(stimulus_target('ux-filemanager-dropzone', 'dropzoneContainer'))
-}}>
+<div{{ attributes.defaults({class: 'ux-filemanager', ...stimulus_controller('ux-filemanager-dialog ux-filemanager-dropzone'), ...stimulus_action('ux-filemanager-dialog', 'backdropClose'), ...stimulus_target('ux-filemanager-dropzone', 'dropzoneContainer')})
+}}
+>
     <!-- Sidebar -->
     <div class="w-64 bg-white border-r border-gray-200 p-4 dark:bg-gray-800 dark:border-gray-700 text-gray-700 dark:text-gray-300 space-y-8">
         <div class="flex items-center space-x-2 mb-8">

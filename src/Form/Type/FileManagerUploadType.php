@@ -98,7 +98,7 @@ class FileManagerUploadType extends AbstractType
         ;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'ux_filemanager_upload';
     }

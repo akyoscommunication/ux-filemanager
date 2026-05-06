@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
 class UXFileManagerExtension extends Extension implements PrependExtensionInterface, ConfigurationInterface
 {
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
 
@@ -71,7 +71,7 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
         return is_file($bundlesMetadata['FrameworkBundle']['path'].'/Resources/config/asset_mapper.php');
     }
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
