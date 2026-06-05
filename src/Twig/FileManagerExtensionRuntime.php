@@ -130,17 +130,19 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
     // TODO: mettre toutes les methodes suivantes dans un service dédié
     public function getFile(string $path, bool $save = false): File
     {
+        if (is_file(rtrim($path, '/'))) {
+            $path = rtrim($path, '/');
+        }
+
         $file = $this->fileRepository->findOneBy(['path' => $path]);
 
         if (!$file) {
             $file = new File();
-            $file
-                ->setPath($path)
-            ;
+            $file->setPath($path);
+        }
 
-            if (file_exists($path)) {
-                $file->setMime(Mimes::from(mime_content_type($path)));
-            }
+        if ($file->getMime() === null && is_file($path)) {
+            $file->setMime($this->detectMime($path));
         }
 
         if ($save) {
@@ -148,6 +150,28 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $file;
+    }
+
+    private function detectMime(string $path): Mimes
+    {
+        $detected = mime_content_type($path);
+        if (is_string($detected) && $detected !== '') {
+            $mime = Mimes::tryFrom($detected);
+            if ($mime !== null) {
+                return $mime;
+            }
+        }
+
+        return match (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
+            'png' => Mimes::PNG,
+            'jpg', 'jpeg' => Mimes::JPG,
+            'gif' => Mimes::GIF,
+            'svg' => Mimes::SVG,
+            'webp' => Mimes::WEBP,
+            'pdf' => Mimes::PDF,
+            'ico' => Mimes::PNG,
+            default => Mimes::TEXT,
+        };
     }
 
     public function managePathInDirectory(string $oldPath, string $newPath): void
