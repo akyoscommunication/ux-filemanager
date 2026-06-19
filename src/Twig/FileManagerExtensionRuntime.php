@@ -118,8 +118,24 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
 
     public function getMimeIcon(\SplFileInfo $file): string
     {
-        $mime = mime_content_type($file->getPathname());
-        return Mimes::from($mime)->getIcon();
+        return Mimes::fromPath($file->getPathname())->getIcon();
+    }
+
+    public function isMimeEmbed(mixed $fileOrPath): bool
+    {
+        if ($fileOrPath instanceof File) {
+            $mime = $fileOrPath->getMime();
+            if ($mime instanceof Mimes) {
+                return Mimes::isEmbed($mime);
+            }
+            $fileOrPath = $fileOrPath->getPath();
+        }
+
+        if (!is_string($fileOrPath) || !is_file($fileOrPath)) {
+            return false;
+        }
+
+        return Mimes::isEmbed(Mimes::fromPath($fileOrPath));
     }
 
     public function relativePath(string $path, string $key): string
@@ -152,26 +168,9 @@ class FileManagerExtensionRuntime implements RuntimeExtensionInterface
         return $file;
     }
 
-    private function detectMime(string $path): Mimes
+    public function detectMime(string $path): Mimes
     {
-        $detected = mime_content_type($path);
-        if (is_string($detected) && $detected !== '') {
-            $mime = Mimes::tryFrom($detected);
-            if ($mime !== null) {
-                return $mime;
-            }
-        }
-
-        return match (strtolower(pathinfo($path, PATHINFO_EXTENSION))) {
-            'png' => Mimes::PNG,
-            'jpg', 'jpeg' => Mimes::JPG,
-            'gif' => Mimes::GIF,
-            'svg' => Mimes::SVG,
-            'webp' => Mimes::WEBP,
-            'pdf' => Mimes::PDF,
-            'ico' => Mimes::PNG,
-            default => Mimes::TEXT,
-        };
+        return Mimes::fromPath($path);
     }
 
     public function managePathInDirectory(string $oldPath, string $newPath): void

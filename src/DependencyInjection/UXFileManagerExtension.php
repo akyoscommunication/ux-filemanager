@@ -26,6 +26,11 @@ class UXFileManagerExtension extends Extension implements PrependExtensionInterf
 
         if (isset($bundles['DoctrineBundle'])) {
             $container->prependExtensionConfig('doctrine', [
+                'dbal' => [
+                    'types' => [
+                        \Akyos\UXFileManager\Doctrine\MimesType::NAME => \Akyos\UXFileManager\Doctrine\MimesType::class,
+                    ],
+                ],
                 'orm' => [
                     'mappings' => [
                         'UXFileManagerBundle' => [

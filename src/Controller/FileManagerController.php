@@ -35,7 +35,7 @@ final class FileManagerController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $mime =  Mimes::from(mime_content_type($pathToFile));
+        $mime = $fileManagerExtensionRuntime->detectMime($pathToFile);
 
         if (Mimes::isRenderIco($mime)) {
             return $this->render('@UXFileManager/render.html.twig', ['mime' => $mime]);

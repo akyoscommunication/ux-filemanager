@@ -110,7 +110,7 @@
                     {% for file in recently_used %}
                         {% set relative_path = file.path|relative_path(path) %}
                         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group relative h-36">
-                            {% if enum('Akyos\\UXFileManager\\Enum\\Mimes').isEmbed(file.mime) %}
+                            {% if file.path|mime_is_embed %}
                                 <embed src="{{ file.path|ux_filemanager_render }}" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl">
                             {% else %}
                                 <img src="{{ file.path|ux_filemanager_render }}" alt="{{ file.alt }}" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl">

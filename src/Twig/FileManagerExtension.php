@@ -16,6 +16,7 @@ class FileManagerExtension extends AbstractExtension
             // filter that convert bytes to human readable format
             new TwigFilter('bytes_to_human', [FileManagerExtensionRuntime::class, 'bytesToHuman']),
             new TwigFilter('mime_icon', [FileManagerExtensionRuntime::class, 'getMimeIcon']),
+            new TwigFilter('mime_is_embed', [FileManagerExtensionRuntime::class, 'isMimeEmbed']),
             // filter that return the relative path of the file
             new TwigFilter('relative_path', [FileManagerExtensionRuntime::class, 'relativePath']),
         ];
