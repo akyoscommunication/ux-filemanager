@@ -12,6 +12,8 @@ final class MimesType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        $column['length'] ??= 255;
+
         return $platform->getStringTypeDeclarationSQL($column);
     }
 

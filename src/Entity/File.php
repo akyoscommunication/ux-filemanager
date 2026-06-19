@@ -20,7 +20,7 @@ class File
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $alt = null;
 
-    #[ORM\Column(type: \Akyos\UXFileManager\Doctrine\MimesType::NAME, nullable: true)]
+    #[ORM\Column(type: \Akyos\UXFileManager\Doctrine\MimesType::NAME, length: 255, nullable: true)]
     private ?Mimes $mime = null;
 
     public function getId(): ?int
