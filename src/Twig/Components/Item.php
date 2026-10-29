@@ -3,6 +3,7 @@
 namespace Akyos\UXFileManager\Twig\Components;
 
 use Akyos\UXFileManager\Enum\Views;
+use Akyos\UXFileManager\Twig\FileManagerExtensionRuntime;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -20,6 +21,7 @@ final class Item
 
     public function __construct(
         private readonly array $actions,
+        private readonly FileManagerExtensionRuntime $fileManagerExtensionRuntime,
     ) {}
 
     #[ExposeInTemplate('actions')]
@@ -53,6 +55,8 @@ final class Item
         $event->setTemplate("@UXFileManager/twig_components/item/$type/$view.html.twig");
         $event->setVariables(array_merge($event->getVariables(), [
             'path' => $path,
+            // absolute path, as expected by UX:FileManager:render (path is relative to the storage)
+            'fullPath' => rtrim($this->fileManagerExtensionRuntime->getConfigurationFromKey($component->storage)['path'], '/') . $path,
         ]));
     }
 }
