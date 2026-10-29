@@ -1,10 +1,12 @@
+{% import '@UXFileManager/macros.html.twig' as macros %}
+
 <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group relative"
      draggable="true"
      data-path="{{ path }}"
      ondragstart="event.dataTransfer.setData('path', '{{ path }}');"
      tabindex="0"
 >
-    <twig:UX:FileManager:render :value="path" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl filter brightness-50"/>
+    <twig:UX:FileManager:render :value="fullPath" class="absolute top-0 left-0 w-full h-full object-cover rounded-xl filter brightness-50"/>
 
     <!-- Checkbox + Bouton de suppression -->
     <div class="flex items-center justify-between mb-2 relative">
